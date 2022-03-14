@@ -1,0 +1,1 @@
+g++ -fexec-charset=big5 -fwide-exec-charset=big5 -o main.exe main.cpp
