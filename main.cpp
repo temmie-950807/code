@@ -1,42 +1,51 @@
 #include <iostream>
-#include <vector>
 using namespace std;
 
-int main(){
-    bool check_if_first_number=0;
-    int input_pointer;
-    const int N=10000;
-    vector<int> number(N, 0);
-    string input;
+typedef struct Bnode
+{
+    int data;
+    Bnode *lchild, *rchild;
+} Bnode;
 
-    while (cin >> input && input!="0"){
-        // init
-        input_pointer = 0;
+void Create_Tree(Bnode **T)
+{
+    char check; // 確認是否創建節點
+    *T = new Bnode;
+    cout << *T << "\n";
+    cout << "輸入節點的值: \n";
+    cin >> (*T)->data;
 
-        // add number in vector
-        for (int i=N-input.size() ; i<N ; i++){
-            number[i] += input[input_pointer++]-'0';
-        }
+    cout << "是否增加" << (*T)->data << "的左節點? (Y/N)\n"; // 增加左節點
+    cin >> check;
+    if (check == 'Y')
+        Create_Tree(&(*T)->lchild);
+    else
+        (*T)->lchild = NULL;
+
+    cout << "是否增加" << (*T)->data << "的右節點? (Y/N)\n"; // 增加右節點
+    cin >> check;
+    if (check == 'Y')
+        Create_Tree(&(*T)->rchild);
+    else
+        (*T)->rchild = NULL;
+}
+
+void preorder(Bnode *T)
+{
+    if (T)
+    {
+        cout << T->data << "\n";
+        preorder(T->lchild);
+        preorder(T->rchild);
     }
+}
 
-    // make output
-    for (int i=N-1 ; i>=9900 ; i--){
-        if (number[i]>=10){
-            number[i-1] += number[i]/10;
-            number[i] %= 10;
-        }
-    }
+int main()
+{
+    Bnode *k;
+    Create_Tree(&k); // 開始創建二元樹
 
-    // output
-    for (int i=0 ; i<N ; i++){
-        if (check_if_first_number) cout << number[i];
-        else if(number[i]!=0){
-            check_if_first_number=1;
-            cout << number[i];
-        }
-
-    }
-    cout << "\n";
-
+    // 先序歷遍
+    preorder(k);
     return 0;
 }
