@@ -1,51 +1,17 @@
 #include <iostream>
 using namespace std;
 
-typedef struct Bnode
-{
-    int data;
-    Bnode *lchild, *rchild;
-} Bnode;
-
-void Create_Tree(Bnode **T)
-{
-    char check; // 確認是否創建節點
-    *T = new Bnode;
-    cout << *T << "\n";
-    cout << "輸入節點的值: \n";
-    cin >> (*T)->data;
-
-    cout << "是否增加" << (*T)->data << "的左節點? (Y/N)\n"; // 增加左節點
-    cin >> check;
-    if (check == 'Y')
-        Create_Tree(&(*T)->lchild);
-    else
-        (*T)->lchild = NULL;
-
-    cout << "是否增加" << (*T)->data << "的右節點? (Y/N)\n"; // 增加右節點
-    cin >> check;
-    if (check == 'Y')
-        Create_Tree(&(*T)->rchild);
-    else
-        (*T)->rchild = NULL;
-}
-
-void preorder(Bnode *T)
-{
-    if (T)
-    {
-        cout << T->data << "\n";
-        preorder(T->lchild);
-        preorder(T->rchild);
+void print(int *v, int height, int width){
+    for (int i=0 ; i<height ; i++){
+        for (int j=0 ; j<width ; j++){
+            cout << *(v+i*width+j) << " ";
+        }
+        cout << "\n";
     }
 }
 
-int main()
-{
-    Bnode *k;
-    Create_Tree(&k); // 開始創建二元樹
-
-    // 先序歷遍
-    preorder(k);
+int main(){
+    int v[2][3] = {{1, 2, 3}, {4, 5, 6}}; // 陣列
+    print((int *)v, 2, 3);
     return 0;
 }
