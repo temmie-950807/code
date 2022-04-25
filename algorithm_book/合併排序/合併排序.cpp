@@ -47,6 +47,5 @@ int main(){
         cout << i << " " << l[i] << "\n";
     }
 
-    system("pause");
     return 0;
 }
