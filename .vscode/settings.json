@@ -46,7 +46,11 @@
         "map": "cpp",
         "numeric": "cpp",
         "random": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "chrono": "cpp",
+        "functional": "cpp",
+        "thread": "cpp",
+        "ratio": "cpp"
     },
     "terminal.integrated.fontFamily": "Source Code Pro"
 }
