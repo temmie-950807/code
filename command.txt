@@ -1,5 +1,0 @@
-編譯: 
-g++ -O2 -o main main.cpp
-
-commit message:
-x/xx update
