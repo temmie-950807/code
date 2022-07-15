@@ -1,3 +1,7 @@
+// Problem: B. Number of Smaller
+// Memory Limit: 256 MB
+// Time Limit: 1000 ms
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -14,40 +18,31 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-int t, n, tmp, check;
-vector<int> v={1}, p;
+int n, m, tmp, p1=0, p2=0;
+vector<int> a, b;
 
 signed main(void){
 	fastio;
 	
-	cin >> n;
-	for (int i=2 ; i<=n ; i++){
-		check = 0;
-		for (int j=2 ; j<i ; j++){
-			if (i%j == 0){
-				v.push_back(i);
-				check = 1;
-				break;
-			}
-		}
-		
-		if (check==0){
-			p.push_back(i);
-		}
+	// input
+	cin >> n >> m;
+	for (int i=0 ; i<n ; i++){
+		cin >> tmp;
+		a.push_back(tmp);
+	}
+	for (int i=0 ; i<m ; i++){
+		cin >> tmp;
+		b.push_back(tmp);
+	}
+	a.push_back(INF);
+	b.push_back(INF);
+	
+	// two pointers
+	int i=0, j=0;
+	for ( ; i<m ; i++){
+		for ( ; j<n && a[j]<b[i] ; j++){}
+		cout << j << " ";
 	}
 	
-	// output
-	sort(v.begin(), v.end(), greater<int>());
-	sort(p.begin(), p.end(), greater<int>());
-	
-	if (v[0] != n){
-		for (auto x : p){
-			cout << x << " ";
-		}
-	}else{
-		for (auto x : v){
-			cout << x << " ";
-		}
-	}
     return 0;
 }
