@@ -13,16 +13,25 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-int t, n, tmp;
+int n, q, tmp;
+vector<int> v;
 
 signed main(void){
 	fastio;
 	
 	// input
-	cin >> t;
-	while (t--){
-		cin >> n;
-        
+	while(cin >> n >> q){
+		for (int i=0 ; i<n ; i++){
+			cin >> tmp;
+			v.PB(tmp);
+		}
+		
+		sort(v.begin(), v.end());
+		
+		for (int i=0 ; i<q ; i++){
+			cin >> tmp;
+			cout << (upper_bound(v.begin(), v.end(), tmp)-v.begin())%2 << "\n";
+		}
 	}
     return 0;
 }

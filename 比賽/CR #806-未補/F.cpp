@@ -41,10 +41,6 @@ signed main(void){
         	b[i] = total;
         }
         
-        for (int i=1 ; i<=n ; i++){
-        	cout << b[i] << " ";
-        }   cout << "\n";
-        
         // process
         for (int i=1 ; i<=n ; i++){
         	if (a[i]<i && a[i]-1>=0){
@@ -53,6 +49,10 @@ signed main(void){
         }
         
         // output
+        // for (int i=1 ; i<=n ; i++) cout << a[i] << " ";
+        // cout << "\n";
+        // for (int i=1 ; i<=n ; i++) cout << b[i] << " ";
+        // cout << "\n\n";
         cout << output << "\n";
 	}
     return 0;
