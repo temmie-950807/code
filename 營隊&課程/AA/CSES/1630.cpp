@@ -1,3 +1,7 @@
+// Problem: Tasks and Deadlines
+// Memory Limit: 512 MB
+// Time Limit: 1000 ms
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,39 +17,28 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-int a=0, b=0, c=0;
-double total=0;
+int n, a, d, output=0;
+vector<pair<int, int>> v;
 
 signed main(void){
 	fastio;
-	srand(time(NULL));
 	
 	// input
-	int n, k, score;
-
 	cin >> n;
 	for (int i=0 ; i<n ; i++){
-		score = 0;
-		for (int j=0 ; j<50 ; j++){
-			
-			k = rand()%4;
-			// cout << k << "\n";
-			if (k==0) score += 2;
-		}
-
-		// check
-		total += score;
-		if (score==60){
-			a++;
-		}
-		if (score>=60){
-			b++;
-		}
-		c++;
+		cin >> a >> d;
+		v.PB({a, d});
 	}
-
+	sort(v.begin(), v.end());
+	
+	int t=0, p=0;
+	while (p<v.size()){
+		t += v[p].first;
+		output += v[p].second-t;
+		p++;
+	}
+	
 	// output
-	cout << total/(double)n << "\n";
-	cout << a << " " << b << " " << c << "\n";
+	cout << output << "\n";
     return 0;
 }

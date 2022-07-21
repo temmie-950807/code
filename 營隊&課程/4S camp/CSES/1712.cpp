@@ -1,3 +1,7 @@
+// Problem: Exponentiation II
+// Memory Limit: 512 MB
+// Time Limit: 1000 ms
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,39 +17,28 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-int a=0, b=0, c=0;
-double total=0;
+int t, a, b, c;
+
+int qp(int b, int p, int m){
+	int k = 1;
+	while (p){
+		if (p&1){
+			k = k*b%m;
+		}
+		b = b*b%m;
+		p >>= 1;
+	}
+	return k;
+}
 
 signed main(void){
 	fastio;
-	srand(time(NULL));
 	
 	// input
-	int n, k, score;
-
-	cin >> n;
-	for (int i=0 ; i<n ; i++){
-		score = 0;
-		for (int j=0 ; j<50 ; j++){
-			
-			k = rand()%4;
-			// cout << k << "\n";
-			if (k==0) score += 2;
-		}
-
-		// check
-		total += score;
-		if (score==60){
-			a++;
-		}
-		if (score>=60){
-			b++;
-		}
-		c++;
+	cin >> t;
+	while (t--){
+		cin >> a >> b >> c;
+        cout << qp(a, qp(b, c, 1000000006), 1000000007) << "\n";
 	}
-
-	// output
-	cout << total/(double)n << "\n";
-	cout << a << " " << b << " " << c << "\n";
     return 0;
 }

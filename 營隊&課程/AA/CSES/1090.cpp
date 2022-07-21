@@ -1,3 +1,7 @@
+// Problem: Ferris Wheel
+// Memory Limit: 512 MB
+// Time Limit: 1000 ms
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,39 +17,52 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-int a=0, b=0, c=0;
-double total=0;
+int n, k, tmp, output=0;
+vector<int> v;
 
 signed main(void){
 	fastio;
-	srand(time(NULL));
 	
 	// input
-	int n, k, score;
-
-	cin >> n;
+	cin >> n >> k;
 	for (int i=0 ; i<n ; i++){
-		score = 0;
-		for (int j=0 ; j<50 ; j++){
-			
-			k = rand()%4;
-			// cout << k << "\n";
-			if (k==0) score += 2;
-		}
-
-		// check
-		total += score;
-		if (score==60){
-			a++;
-		}
-		if (score>=60){
-			b++;
-		}
-		c++;
+		cin >> tmp;
+		v.PB(tmp);
 	}
-
+	sort(v.begin(), v.end());
+	
+	// process
+	int p1=0, p2=n-1;
+	while (p1<p2){
+		if (v[p1]+v[p2]<=k){
+			v[p1] = -1;
+			v[p2] = -1;
+			p1++;
+			p2--;
+			output++;
+		}else{
+			p2--;
+		}
+	}
+	
+	int p=0, check=0;
+	for (auto x : v){
+		if (x==-1){
+			continue;
+		}else{
+			check=1;
+			if (x+p>k){
+				p = x;
+				output++;
+			}else{
+				p += x;
+			}
+		}
+	}
+	output += check;
+	
+	
 	// output
-	cout << total/(double)n << "\n";
-	cout << a << " " << b << " " << c << "\n";
+	cout << output << "\n";
     return 0;
 }

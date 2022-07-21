@@ -1,3 +1,7 @@
+// Problem: J. 調色盤 (Colors)
+// Memory Limit: 256 MB
+// Time Limit: 1000 ms
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,39 +17,35 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-int a=0, b=0, c=0;
-double total=0;
+int n, q, tmp;
+int all_gcd;
+vector<int> input;
 
 signed main(void){
 	fastio;
-	srand(time(NULL));
 	
 	// input
-	int n, k, score;
-
 	cin >> n;
 	for (int i=0 ; i<n ; i++){
-		score = 0;
-		for (int j=0 ; j<50 ; j++){
-			
-			k = rand()%4;
-			// cout << k << "\n";
-			if (k==0) score += 2;
-		}
-
-		// check
-		total += score;
-		if (score==60){
-			a++;
-		}
-		if (score>=60){
-			b++;
-		}
-		c++;
+		cin >> tmp;
+		input.PB(tmp);
 	}
-
-	// output
-	cout << total/(double)n << "\n";
-	cout << a << " " << b << " " << c << "\n";
+	
+	all_gcd = input[0];
+	for (int i=1 ; i<n ; i++){
+		all_gcd = __gcd(all_gcd, input[i]);
+	}
+	
+	// cout << "gcd: " << all_gcd << "\n";
+	
+	cin >> q;
+	for (int i=0 ; i<q ; i++){
+		cin >> tmp;
+		if ((tmp-1115)%all_gcd==0){
+			cout << "Yes\n";
+		}else{
+			cout << "No\n";
+		}
+	}
     return 0;
 }
