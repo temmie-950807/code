@@ -13,16 +13,26 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-int t, n, tmp;
+int n;
+vector<int> v;
 
 signed main(void){
 	fastio;
 	
 	// input
-	cin >> t;
-	while (t--){
-		cin >> n;
-        
-	}
+	cin >> n;
+
+    for (int i=0 ; i<n ; i++){
+        for (int j=0 ; j<n ; j++){
+            v.PB(i);
+            v.PB(j);
+        }
+    }
+    v.PB(0);
+
+    cout << v.size() << "\n";
+    for (auto x : v){
+        cout << x << " ";
+    }
     return 0;
 }

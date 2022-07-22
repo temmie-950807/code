@@ -6,7 +6,6 @@
 #pragma comment(linker, "/STACK:1024000000")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
-#define PB push_back
 const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 using namespace std;
@@ -18,9 +17,9 @@ int t, n, tmp;
 signed main(void){
 	fastio;
 	
-	// input
 	cin >> t;
 	while (t--){
+		// input
 		cin >> n;
         
 	}

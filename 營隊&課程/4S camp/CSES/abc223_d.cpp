@@ -1,6 +1,6 @@
-// Problem: Course Schedule
-// Memory Limit: 512 MB
-// Time Limit: 1000 ms
+// Problem: D - Restricted Permutation
+// Memory Limit: 1024 MB
+// Time Limit: 2000 ms
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -17,26 +17,9 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-bool check=0;
 int n, m, a, b;
-vector<int> vis(MAX_SIZE, 0), G[MAX_SIZE], output;
-
-void DFS(int x){
-	vis[x] = 2; // on road
-	for (auto y : G[x]){
-		if (vis[y]==2){
-			check = 1;
-			return;
-		}
-		if (vis[y]==0){
-			DFS(y);
-		}
-	}
-	
-	vis[x] = 1; // pass , not on road
-	output.PB(x);
-	return;
-}
+vector<int> G[MAX_SIZE], k(MAX_SIZE, 0), output;
+priority_queue<int, vector<int>, greater<int>> pq;
 
 signed main(void){
 	fastio;
@@ -46,23 +29,37 @@ signed main(void){
 	for (int i=0 ; i<m ; i++){
 		cin >> a >> b;
 		G[a].PB(b);
+		k[b]++;
 	}
 	
-	// DFS
 	for (int i=1 ; i<=n ; i++){
-		if (vis[i]==0){
-			DFS(i);
+		if (k[i]==0){
+			pq.push(i);
+			k[i] = INF;
 		}
 	}
 	
-	if (check == 1){
-		cout << "IMPOSSIBLE\n";
-		return 0;
+	while (pq.size()){
+		int now = pq.top();
+		pq.pop();
+		
+		output.PB(now);
+		
+		for (auto x : G[now]){
+			k[x]--;
+			
+			if (k[x]==0){
+				pq.push(x);
+				k[x] = INF;
+			}
+		}
+	}
+	
+	if (output.size()==n){
+		for (auto x : output) cout << x << " ";
+		cout << "\n";
 	}else{
-		reverse(output.begin(), output.end());
-		for (auto x : output){
-			cout << x << " ";
-		}   cout << "\n";
+		cout << "-1\n";
 	}
     return 0;
 }

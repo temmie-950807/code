@@ -12,17 +12,11 @@ const int INF = 1e18;
 using namespace std;
 using namespace __gnu_pbds;
 
-// declare
-int t, n, tmp;
-
 signed main(void){
-	fastio;
-	
-	// input
-	cin >> t;
-	while (t--){
-		cin >> n;
-        
-	}
+    fastio;
+    
+    // input
+    cout << "Hello World!\n";
     return 0;
 }
+
