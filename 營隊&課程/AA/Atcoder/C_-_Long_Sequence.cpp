@@ -13,17 +13,30 @@ using namespace std;
 using namespace __gnu_pbds;
 
 // declare
-int t, n, tmp;
+int n, s=0, tmp, x, output=0;
+vector<int> v(MAX_SIZE);
 
 signed main(void){
     fastio;
     
-    cin >> t;
-    while (t--){
-        // input
-        cin >> n;
-        
-        
+    // input
+    cin >> n;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        s += tmp;
+        v[i] = tmp;
     }
+    cin >> x;
+
+    // pre-process
+    partial_sum(v.begin(), v.end(), v.begin());
+
+    // process
+    output += (x/s)*n;
+    x %= s;
+    output += upper_bound(v.begin(), v.end(), x)-v.begin()+1;
+
+    // output
+    cout << output << "\n";
     return 0;
 }

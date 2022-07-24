@@ -79,5 +79,6 @@
         "shared_mutex": "cpp",
         "typeindex": "cpp"
     },
-    "terminal.integrated.fontFamily": "Source Code Pro"
+    "terminal.integrated.fontFamily": "Source Code Pro",
+    "C_Cpp.errorSquiggles": "Enabled"
 }
