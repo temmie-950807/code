@@ -80,5 +80,14 @@
         "typeindex": "cpp"
     },
     "terminal.integrated.fontFamily": "Source Code Pro",
-    "C_Cpp.errorSquiggles": "Enabled"
+    "C_Cpp.errorSquiggles": "Enabled",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./比賽",
+        "-p",
+        "*test.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }

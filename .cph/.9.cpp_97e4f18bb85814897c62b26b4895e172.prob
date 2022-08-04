@@ -1,0 +1,1 @@
+{"name":"Local: 9","url":"c:\\Users\\Temmie\\Documents\\GitHub\\code\\9.cpp","tests":[{"id":1659429758994,"input":"10 9\n3 9 6 4 7 3 1 2 4 5\n10 1\n10 4\n9 6\n3 7\n5 8\n2 5\n3 9\n2 3\n2 10","output":"23"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\Temmie\\Documents\\GitHub\\code\\9.cpp","group":"local","local":true}

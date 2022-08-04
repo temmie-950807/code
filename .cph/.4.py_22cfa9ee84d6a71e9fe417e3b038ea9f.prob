@@ -1,0 +1,1 @@
+{"name":"Local: 4","url":"c:\\Users\\Temmie\\Documents\\GitHub\\code\\4.py","tests":[{"id":1659427895000,"input":"2 3\n1 0 3 3\n4 3 5 4\n3 1 1\n3 5 3\n6 1 1","output":"1\n2\n0"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\Temmie\\Documents\\GitHub\\code\\4.py","group":"local","local":true}
