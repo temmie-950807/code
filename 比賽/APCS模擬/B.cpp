@@ -28,12 +28,12 @@ signed main(void){
         }
 
         ans=0;
-        for (int i=1 ; i<=h ; i++){
-            for (int j=1 ; j<=w ; j++){
-                cout << arr[i][j] << " ";
-            }   cout << "\n";
-        }
-        cout << ans << "\n";
+        // for (int i=1 ; i<=h ; i++){
+        //     for (int j=1 ; j<=w ; j++){
+        //         cout << arr[i][j] << " ";
+        //     }   cout << "\n";
+        // }
+        // cout << ans << "\n";
 
         // input for every query(?)
         cin >> k;
