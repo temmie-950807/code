@@ -1,1 +1,0 @@
-Takahashi is standing at the coordinate 0 on a number line.He will now perform N jumps. In the i-th jump (1≤i≤N), he moves a i​  or b i​  in the positive direction.Is it possible for him to be at the coordinate X after N jumps?
