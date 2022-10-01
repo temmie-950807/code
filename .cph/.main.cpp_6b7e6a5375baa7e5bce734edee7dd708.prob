@@ -1,0 +1,1 @@
+{"name":"Local: main","url":"c:\\Users\\Temmie\\Documents\\GitHub\\code\\main.cpp","tests":[{"id":1664604272265,"input":"3\n1 5\n4 3\n2 4\n3","output":"1\n10 56\n3"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\Temmie\\Documents\\GitHub\\code\\main.cpp","group":"local","local":true}

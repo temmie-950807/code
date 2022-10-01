@@ -17,23 +17,37 @@ using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
 
 // declare
-int n, tmp;
-int a, b;
-vector<pair<int, int>> v;
+int n, tmp, x;
+int ans=0;
+vector<int> v;
+
+// function
+void dfs(int now, int cnt, int total){
+    if (cnt==n){
+        if (total<=x){
+            ans++;
+        }
+        return;
+    }else{
+        dfs(0, cnt+1, total+v[0]);
+        dfs(1, cnt+1, total+v[1]);
+        dfs(2, cnt+1, total+v[2]);
+    }
+}
 
 void solve(){
     cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> a >> b;
-        v.push_back({a, b});
+    for (int i=0 ; i<3 ; i++){
+        cin >> tmp;
+        v.push_back(tmp);
     }
+    cin >> x;
 
-    cin >> tmp;
-    int ma=-INF;
-    for (auto x : v){
-        ma=max(ma, x.first*tmp+x.second);
-    }
-    cout << ma << endl;
+    dfs(0, 1, v[0]);
+    dfs(1, 1, v[1]);
+    dfs(2, 1, v[2]);
+
+    cout << ans << endl;
 }
 
 signed main(void){

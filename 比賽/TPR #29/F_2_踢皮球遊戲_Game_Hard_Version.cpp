@@ -9,7 +9,7 @@
 #if !LOCAL
 #define endl "\n"
 #endif
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 using namespace std;
@@ -17,23 +17,38 @@ using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
 
 // declare
-int n, tmp;
-int a, b;
-vector<pair<int, int>> v;
+int n, m;
+int tmp, fi=0, se=0;
+vector<int> v(1), k;
+vector<int> vis(MAX_SIZE, 0);
 
 void solve(){
-    cin >> n;
+    cin >> n >> m;
     for (int i=0 ; i<n ; i++){
-        cin >> a >> b;
-        v.push_back({a, b});
+        cin >> tmp;
+        v.push_back(tmp);
     }
 
-    cin >> tmp;
-    int ma=-INF;
-    for (auto x : v){
-        ma=max(ma, x.first*tmp+x.second);
+    int now=1;
+    for (int i=0 ; i<2*n ; i++){
+        if (vis[now]==0){
+            vis[now]=1;
+            fi++;
+        }else if (vis[now]==1){
+            k.push_back(now);
+            vis[now]=2;
+            fi--;
+        }else{
+            break;
+        }
+
+        now=v[now];
     }
-    cout << ma << endl;
+
+    // for (auto x : k){
+    //     cout << x << " ";
+    // }   cout << endl;
+    cout << k[(m-fi-1)%k.size()] << endl;
 }
 
 signed main(void){

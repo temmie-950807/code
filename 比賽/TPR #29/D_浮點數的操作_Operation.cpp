@@ -17,23 +17,22 @@ using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
 
 // declare
-int n, tmp;
-int a, b;
-vector<pair<int, int>> v;
+string s;
 
 void solve(){
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> a >> b;
-        v.push_back({a, b});
-    }
+    cin >> s;
+    if (s=="0") cout << 0 << endl;
+    int pre=0;
+    
+    for (int i=0 ; i<s.size() ; i++){
+        if (s[i]!='0' && s[i]!='.'){
+            pre=1;
+        }
 
-    cin >> tmp;
-    int ma=-INF;
-    for (auto x : v){
-        ma=max(ma, x.first*tmp+x.second);
+        if (pre==1 && s[i]!='.'){
+            cout << s[i];
+        }
     }
-    cout << ma << endl;
 }
 
 signed main(void){

@@ -18,22 +18,12 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 
 // declare
 int n, tmp;
-int a, b;
-vector<pair<int, int>> v;
 
 void solve(){
     cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> a >> b;
-        v.push_back({a, b});
-    }
-
-    cin >> tmp;
-    int ma=-INF;
-    for (auto x : v){
-        ma=max(ma, x.first*tmp+x.second);
-    }
-    cout << ma << endl;
+    if (n%2==1) cout << "Yes\n";
+    else cout << "No\n";
+    return;
 }
 
 signed main(void){

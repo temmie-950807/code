@@ -9,7 +9,7 @@
 #if !LOCAL
 #define endl "\n"
 #endif
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 using namespace std;
@@ -17,23 +17,39 @@ using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
 
 // declare
-int n, tmp;
-int a, b;
-vector<pair<int, int>> v;
+int n, tmp, x;
+vector<int> v, ans(MAX_SIZE);
+
+// function
+void dfs(int now, int cnt, int total){
+    if (cnt==n){
+        ans[total]++;
+        return;
+    }else{
+        dfs(0, cnt+1, total+v[0]);
+        dfs(1, cnt+1, total+v[1]);
+        dfs(2, cnt+1, total+v[2]);
+    }
+}
 
 void solve(){
     cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> a >> b;
-        v.push_back({a, b});
+    for (int i=0 ; i<3 ; i++){
+        cin >> tmp;
+        v.push_back(tmp);
     }
 
-    cin >> tmp;
-    int ma=-INF;
-    for (auto x : v){
-        ma=max(ma, x.first*tmp+x.second);
+    dfs(0, 1, v[0]);
+    dfs(1, 1, v[1]);
+    dfs(2, 1, v[2]);
+
+    partial_sum(ans.begin(), ans.end(), ans.begin());
+
+    cin >> x;
+    for (int i=0 ; i<x ; i++){
+        cin >> tmp;
+        cout << ans[tmp] << endl;
     }
-    cout << ma << endl;
 }
 
 signed main(void){
