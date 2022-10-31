@@ -36,11 +36,31 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+int n, k, tmp;
+vector<int> v, vv;
 
-void solve(){
-    
+void solve1(){
+    // input
+    cin >> n >> k;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        v.push_back(tmp);
+    }
+
+    if (k>=1) cout << v[0]+v[1]+v[2] << endl;
+
+    if (k>=2){
+        int ans=-INF;
+        ans=max(ans, min(v[0], v[1])+min(max(v[0], v[1])-min(v[0], v[1]), v[2]));
+        ans=max(ans, min(v[1], v[2])+min(max(v[1], v[2])-min(v[1], v[2]), v[0]));
+        ans=max(ans, min(v[2], v[0])+min(max(v[2], v[0])-min(v[2], v[0]), v[1]));
+        cout << ans << endl;
+    }
+
+    if (k>=3){
+        cout << *min_element(v.begin(), v.end()) << endl;
+    }
+
     return;
 }
 
@@ -48,9 +68,8 @@ signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
-        solve();
+        solve1();
     }
     return 0;
 }

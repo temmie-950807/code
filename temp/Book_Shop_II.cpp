@@ -34,21 +34,86 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
-const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+int n, x, tmp;
+int dp[2][MAX_SIZE];
+vector<int> tmp_wei(1), tmp_val(1), tmp_cnt(1);
+vector<int> wei(1), val(1), cnt(1);
 
 void solve(){
-    
-    return;
+    // input
+    cin >> n >> x;
+    for (int i=1 ; i<=n ; i++){
+        cin >> tmp;
+        tmp_wei.push_back(tmp);
+    }
+    for (int i=1 ; i<=n ; i++){
+        cin >> tmp;
+        tmp_val.push_back(tmp);
+    }
+    for (int i=1 ; i<=n ; i++){
+        cin >> tmp;
+        tmp_cnt.push_back(tmp);
+    }
+
+    // init
+    for (int i=1 ; i<=n ; i++){
+
+        int k=1;
+        while (tmp_cnt[i]>=k){
+            wei.push_back(tmp_wei[i]);
+            val.push_back(tmp_val[i]);
+            cnt.push_back(k);
+
+            tmp_cnt[i]-=k;
+            k<<=1;
+        }
+
+        if (tmp_cnt[i]){
+            wei.push_back(tmp_wei[i]);
+            val.push_back(tmp_val[i]);
+            cnt.push_back(tmp_cnt[i]);
+        }
+    }
+
+    // debug(wei);
+    // debug(val);
+    // debug(cnt);
+    // cout << endl;
+
+    // DP
+    for (int i=1 ; i<wei.size() ; i++){
+        for (int j=0 ; j<=x ; j++){
+            if (j-wei[i]*cnt[i]>=0){
+                // 有可能選擇
+                dp[i&1][j]=max(dp[!(i&1)][j], dp[!(i&1)][j-wei[i]*cnt[i]]+val[i]*cnt[i]);
+            }else{
+                // 不能選擇
+                dp[i&1][j]=dp[!(i&1)][j];
+            }
+        }
+
+        // for (int j=0 ; j<=x ; j++){
+        //     cout << dp[i&1][j] << " ";
+        // }   cout << endl;
+    }
+
+    // preview
+    // for (int i=x-10 ; i<=x ; i++){
+    //     cout << dp[0][i] << " ";
+    // }   cout << endl;
+    // for (int i=x-10 ; i<=x ; i++){
+    //     cout << dp[1][i] << " ";
+    // }   cout << endl;
+
+    // output
+    cout << dp[!(wei.size()&1)][x] << endl;
 }
 
 signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }

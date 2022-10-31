@@ -34,21 +34,42 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
-const double EPS = 1e-6;
 
-int n, tmp;
+int n, q, tmp;
 vector<int> v;
 
 void solve(){
-    
-    return;
+    cin >> n >> q;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        v.push_back(tmp);
+    }
+    sort(v.begin(), v.end());
+
+    for (int i=0 ; i<q ; i++){
+        cin >> tmp;
+
+        int ll=0, rr=n, mid=0;
+        while (ll<rr){
+            mid=ll+(rr-ll)/2;
+
+            if (v[mid]==tmp){
+                break;
+            }else if (v[mid]>tmp){
+                rr=mid;
+            }else{
+                ll=mid+1;
+            }
+        }
+
+        cout << (v[mid]==tmp ? "YES" : "NO") << endl;
+    }
 }
 
 signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }

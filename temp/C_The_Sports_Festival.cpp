@@ -9,6 +9,9 @@
 #if !LOCAL
 #define endl "\n"
 #endif
+const int MAX_SIZE = 2e3+5;
+const int INF = 1e18;
+const int MOD = 1e9+7;
 using namespace std;
 using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
@@ -31,24 +34,37 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
-const int INF = 1e18;
-const int MOD = 1e9+7;
-const double EPS = 1e-6;
-
-int n, tmp;
-vector<int> v;
+int n, tmp, ans=0;
+vector<int> v(1);
+int dp[MAX_SIZE][MAX_SIZE];
 
 void solve(){
-    
-    return;
+    // input
+    cin >> n;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        v.push_back(tmp);
+    }
+    sort(v.begin(), v.end());
+
+    // dp
+    for (int r=1 ; r<=n ; r++){
+        for (int l=r-1 ; l>=1 ; l--){
+            dp[l][r]=v[r]-v[l]+min(dp[l][r-1], dp[l+1][r]); // min(接在後面)
+        }
+    }
+
+    // preview
+    // debug(dp, n+1, n+1);
+
+    // output
+    cout << dp[1][n] << endl;
 }
 
 signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }

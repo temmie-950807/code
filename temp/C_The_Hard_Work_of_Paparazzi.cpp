@@ -34,13 +34,37 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
-const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+int w, n;
+int tt[MAX_SIZE], xx[MAX_SIZE], yy[MAX_SIZE];
+int dp[MAX_SIZE];
 
 void solve(){
-    
+    // init
+    xx[0]=1;
+    yy[0]=1;
+    tt[0]=0;
+    dp[0]=0;
+
+    // input
+    cin >> w >> n;
+
+    // dp
+    for (int i=1 ; i<=n ; i++){
+        cin >> tt[i] >> xx[i] >> yy[i];
+        dp[i]=-INF;
+        for (int j=i-1 ; j>=0 && i-j<2000 ; j--){
+            if (tt[i]-tt[j]>=(abs(xx[i]-xx[j])+abs(yy[i]-yy[j]))){
+                dp[i]=max(dp[i], dp[j]+1);
+            }
+        }
+    }
+
+    // preview
+    // debug(dp, n+1);
+
+    // output
+    cout << *max_element(dp, dp+n+1) << endl;
     return;
 }
 
@@ -48,7 +72,6 @@ signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }

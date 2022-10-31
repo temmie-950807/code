@@ -36,11 +36,31 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
+int n, k;
 vector<int> v;
+vector<pair<vector<int>, vector<int>>> op;
 
-void solve(){
+void solve1(){
+    cin >> n >> k;
+    for (int i=1 ; i<=n ; i++){
+        v.push_back(i);
+    }
+
+    // enumerate
+    do{
+        vector<int> tmp;
+        for (int i=1 ; i<n ; i++){
+            tmp.push_back(v[i]-v[i-1]);
+        }
+        op.push_back({tmp, v});
+    } while (next_permutation(v.begin(), v.end()));
     
+    // output
+    sort(op.begin(), op.end());
+    for (auto x : op[k-1].second){
+        cout << x << " ";
+    }   cout << endl;
+
     return;
 }
 
@@ -48,9 +68,8 @@ signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
-        solve();
+        solve1();
     }
     return 0;
 }

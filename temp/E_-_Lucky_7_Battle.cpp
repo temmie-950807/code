@@ -31,24 +31,45 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
-const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+int n;
+string s, t;
+char dp[10][MAX_SIZE]; // 維護個位數是i時，哪方會獲勝
 
 void solve(){
-    
-    return;
+    // input
+    cin >> n >> s >> t;
+
+    // init
+    for (int j=0 ; j<10 ; j++){
+        dp[j][n]=(j==0 || j==7 ? 'T' : 'A');
+    }
+
+    // dp
+    for (int i=n-1 ; i>=0 ; i--){
+        for (int j=0 ; j<10 ; j++){
+            if (dp[(j*10+s[i]-'0')%7][i+1]==t[i] || dp[(j*10)%7][i+1]==t[i]){
+                dp[j][i]=t[i];
+            }else{
+                dp[j][i]='A'+'T'-t[i];
+            }
+        }
+    }
+
+    // preview
+    // debug(dp, 10, n+1);
+
+    // output
+    cout << (dp[0][0]=='A' ? "Aoki" : "Takahashi") << endl;
 }
 
 signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }
