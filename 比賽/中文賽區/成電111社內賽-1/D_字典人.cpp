@@ -34,65 +34,34 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
+const double EPS = 1e-6;
 
-int n, m, a, b, tmp;
-vector<int> G[MAX_SIZE], cnt(MAX_SIZE);
-bitset<MAX_SIZE> vis, dp;
-string ans="";
-
-// function
-int dfs(int x){
-    vis[x]=1;
-    int ret=1;
-
-    for (auto y : G[x]){
-        if (vis[y]==0) ret+=dfs(y);
-    }
-
-    return ret;
-}
+int n, m;
+string s;
+vector<string> v;
 
 void solve(){
     // input
     cin >> n >> m;
-    for (int i=0 ; i<m ; i++){
-        cin >> a >> b;
-        G[a].push_back(b);
-        G[b].push_back(a);
-    }
-
-    // get size of connected component
-    for (int i=1 ; i<=n ; i++){
-        if (vis[i]==0){
-            cnt[dfs(i)]++;
-        }
-    }
-
-    // preview
-    // debug(cnt, n+1);
-
-    // dp
-    dp[0]=1;
-    for (int i=1 ; i<=n ; i++){
-
-        int now=1;
-        while (cnt[i]){
-            dp|=(dp<<(min(now, cnt[i])*i));
-            cnt[i]-=min(now, cnt[i]);
-            now<<=1;
-        }
+    for (int i=0 ; i<n ; i++){
+        cin >> s;
+        v.push_back(s);
     }
 
     // output
-    for (int i=1 ; i<=n ; i++){
-        cout << dp[i];
-    }   cout << endl;
+    sort(v.begin(), v.end());
+    for (int i=0 ; i<m ; i++){
+        cin >> s;
+        if (binary_search(v.begin(), v.end(), s)==0){
+            cout << i << endl;
+        }
+    }
     return;
 }
 
 signed main(void){
     fastio;
-
+    
     int t=1;
     while (t--){
         solve();

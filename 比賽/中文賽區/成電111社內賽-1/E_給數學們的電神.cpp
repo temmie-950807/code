@@ -31,47 +31,60 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 2e3+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
+const double EPS = 1e-6;
 
-int n, m, tmp, ans;
-vector<int> s(1), t(1);
-int dp[MAX_SIZE][MAX_SIZE];
+int n, x, tmp;
+vector<int> v;
 
-void solve(){
-    // input
-    cin >> n >> m;
-    for (int i=1 ; i<=n ; i++){
-        cin >> tmp;
-        s.push_back(tmp);
-    }
-    for (int i=1 ; i<=m ; i++){
-        cin >> tmp;
-        t.push_back(tmp);
-    }
+// function
+bool check(int mid){
+    int add=0;
 
-    // DP
-    for (int i=0 ; i<=n ; i++) dp[i][0]=1;
-    for (int i=0 ; i<=m ; i++) dp[0][i]=1;
-
-    for (int i=1 ; i<=n ; i++){
-        for (int j=1 ; j<=m ; j++){
-            dp[i][j]=dp[i-1][j]+dp[i][j-1]-dp[i-1][j-1];
-
-            if (s[i]==t[j]){
-                dp[i][j]+=dp[i-1][j-1];
+    for (int i=0 ; i<n ; i++){
+        if ((mid+v[i]-1)/v[i]>x+add){
+            return 0;
+        }else{
+            if ((mid+v[i]-1)/v[i]>x){
+                // 可以負荷 但是需要別人的時間
+                add-=((mid+v[i]-1)/v[i])-x;
+            }else{
+                // 可以負荷 而且只需要自己的時間
+                add+=x-((mid+v[i]-1)/v[i]);
             }
-
-            dp[i][j]=(dp[i][j]%MOD+MOD)%MOD;
         }
     }
 
-    // preview
-    // debug(dp, n+1, m+1);
+    return 1;
+}
+
+void solve(){
+    cin >> n >> x;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        v.push_back(tmp);
+    }
+    sort(v.begin(), v.end(), greater());
+
+    // binary search
+    int ll=0, rr=1e15+1, mid, ans=-INF;
+    while (ll<rr){
+        // init
+        int mid=ll+(rr-ll)/2;
+    
+        if (check(mid)){
+            ll=mid+1;
+            ans=max(ans, mid);
+        }else{
+            rr=mid;
+        }
+    }
 
     // output
-    cout << dp[n][m] << endl;
+    cout << ans << endl;
+    return;
 }
 
 signed main(void){

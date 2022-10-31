@@ -34,36 +34,73 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
+const double EPS = 1e-6;
 
-int n, q, tmp;
-vector<int> v;
+int n, m, k, w;
+int x, y;
+int ip[3][130];
+int arr[130][130];
 
 void solve(){
-    cin >> n >> q;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
+    // input
+    cin >> n >> m >> k >> w;
+    for (int i=0 ; i<k ; i++){
+        cin >> ip[0][i] >> ip[1][i] >> ip[2][i];
     }
-    sort(v.begin(), v.end());
+    for (int i=0 ; i<w ; i++){
+        cin >> x >> y;
+        arr[x][y]=2;
+    }
 
-    for (int i=0 ; i<q ; i++){
-        cin >> tmp;
+    // process
+    for (int i=0 ; i<k ; i++){
+        if (arr[ip[0][i]][ip[1][i]]==2){
+            continue;
+        }else if (ip[2][i]==1){
+            x=ip[0][i];
+            y=ip[1][i];
 
-        int ll=0, rr=n, mid=0;
-        while (ll<rr){
-            mid=ll+(rr-ll)/2;
+            arr[x][y]=1;
+            while (x<n && arr[x+1][y]!=2){
+                arr[++x][y]=1;
+            }
 
-            if (v[mid]==tmp){
-                break;
-            }else if (v[mid]>tmp){
-                rr=mid;
-            }else{
-                ll=mid+1;
+            x=ip[0][i];
+            y=ip[1][i];
+
+            while (x>1 && arr[x-1][y]!=2){
+                arr[--x][y]=1;
+            }
+        }else if (ip[2][i]==2){
+            x=ip[0][i];
+            y=ip[1][i];
+
+            arr[x][y]=1;
+            while (y<m && arr[x][y+1]!=2){
+                arr[x][++y]=1;
+            }
+
+            x=ip[0][i];
+            y=ip[1][i];
+
+            while (y>1 && arr[x][y-1]!=2){
+                arr[x][--y]=1;
             }
         }
-
-        cout << (v[mid]==tmp ? "YES" : "NO") << endl;
     }
+
+    // preview
+    // debug(arr, n+2, m+2);
+
+    // output
+    int s=0;
+    for (int i=1 ; i<=n ; i++){
+        for (int j=1 ; j<=m ; j++){
+            if (arr[i][j]==1) s++;
+        }
+    }
+    cout << s << endl;
+    return;
 }
 
 signed main(void){

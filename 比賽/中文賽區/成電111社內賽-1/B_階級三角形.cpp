@@ -35,40 +35,27 @@ const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 
-int n, q, tmp;
+int n;
 vector<int> v;
 
 void solve(){
-    cin >> n >> q;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    sort(v.begin(), v.end());
+    cin >> n;
 
-    for (int i=0 ; i<q ; i++){
-        cin >> tmp;
-
-        int ll=0, rr=n, mid=0, ans=-INF;
-        while (ll<rr){
-            mid=ll+(rr-ll)/2;
-            // cout << "mid: " << mid << endl;
-
-            if (v[mid]>tmp){
-                rr=mid;
-            }else{
-                ans=max(ans, mid);
-                ll=mid+1;
-            }
+    for (int i=n ; i>=1 ; i--){
+        for (int j=n-i+1 ; j<n ; j++){
+            cout << " ";
+        }
+        for (int j=n-i+1 ; j>=1 ; j--){
+            cout << i%10;
         }
 
-        cout << (ans==-INF ? 0 : ans+1) << endl;
+        cout << endl;
     }
 }
 
 signed main(void){
     fastio;
-    
+
     int t=1;
     while (t--){
         solve();

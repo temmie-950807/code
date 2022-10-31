@@ -31,81 +31,40 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 2e5+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 
-int n, k, tmp;
-int cnt;
-vector<int> v(MAX_SIZE), G[MAX_SIZE], dep(MAX_SIZE);
-
-// function
-void dfs(int x, int mid){
-    for (auto y : G[x]){
-        dfs(y, mid);
-        dep[x]=max(dep[x], dep[y]);
-    }
-
-    if (x!=1) dep[x]++;
-
-    if (dep[x]==mid && v[x]!=1){
-        cnt++;
-        dep[x]=0;
-    }
-}
-
-bool check(int mid){ // 是否可以在k步裡面小於等於x高度
-    // init
-    cnt=0;
-    for (int i=0 ; i<=n ; i++){
-        dep[i]=0;
-    }
-
-    // dfs
-    dfs(1, mid);
-
-    return cnt<=k;
-}
+int n, k, tmp, ma=-INF, cnt=0;
+vector<int> v;
 
 void solve(){
-    // init
-    cin >> n >> k;
-    for (int i=0 ; i<=n ; i++){
-        G[i].clear();
-    }
-
     // input
-    v[1]=1;
-    for (int i=2 ; i<=n ; i++){
-        cin >> v[i];
-        G[v[i]].push_back(i);
+    cin >> n >> k;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        v.push_back(tmp);
     }
 
-    // binary search
-    int l=1, r=n, mid, ans=INF; // [l, r)
-    while (l<r){
-        // init
-        mid=l+(r-l)/2;
-
-        // move
-        if (check(mid)==1){
-            ans=min(ans, mid);
-            r=mid;
+    // process
+    for (int i=0 ; i<n ; i++){
+        if (v[i]>=k){
+            cnt++;
         }else{
-            l=mid+1;
+            ma=max(ma, cnt);
+            cnt=0;
         }
     }
+    ma=max(ma, cnt);
+    cout << ma << endl;
 
-    // output
-    cout << ans << endl;
     return;
 }
 
 signed main(void){
     fastio;
-    
+
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }
