@@ -35,36 +35,28 @@ const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
 int n, tmp, cnt=0;
-vector<int> a, b;
+vector<int> a, b((1<<21)+10, 0);
 
 void solve1(){
     // init
     cin >> n;
-    b.resize(n*n+5);
 
     // input
     for (int i=0 ; i<n ; i++){
         cin >> tmp;
         a.push_back(tmp);
     }
-
-    int j=0;
-    for (int i=0 ; i<n ; i++){ // O(n^2)
+    for (int i=0 ; i<n ; i++){
         cin >> tmp;
         for (auto x : a){
-            b[j++]=x^tmp;
+            b[(x^tmp)]++;
         }
     }
 
-    return;
- 
     // get count
-    sort(b.begin(), b.begin()+j); // O(log n^2)
-    for (int i=0 ; i<n ; i++){ // O(n log n^2)
+    for (int i=0 ; i<n ; i++){
         cin >> tmp;
-        if (binary_search(b.begin(), b.begin()+j, tmp)==1){
-            cnt+=upper_bound(b.begin(), b.begin()+j, tmp)-lower_bound(b.begin(), b.begin()+j, tmp);
-        }
+        cnt+=b[tmp];
     }
  
     // output
