@@ -38,10 +38,9 @@ int n, tmp, cnt=0;
 vector<int> a, b((1<<21)+10, 0);
 
 void solve1(){
-    // init
-    cin >> n;
 
     // input
+    cin >> n;
     for (int i=0 ; i<n ; i++){
         cin >> tmp;
         a.push_back(tmp);
