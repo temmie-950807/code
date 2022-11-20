@@ -3,7 +3,6 @@
 #include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-#pragma comment(linker, "/STACK:1024000000,1024000000")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
 #if !LOCAL
@@ -12,6 +11,20 @@
 using namespace std;
 using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 
 // debugger
 // ===================================
@@ -31,96 +44,62 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q, tmp;
-int t, x, y;
+int n, m, tmp, ans;
 vector<int> v;
 
-struct segment_tree{
-    // [ll, rr)
-    struct node{
-        int sum;
-        int cnt[50];
-    } seg[4*MAX_SIZE];
-
-    node combine(node a, node b){
-        node c;
-
-        c.sum=0;
-        for (int i=1 ; i<=40 ; i++){
-            c.cnt[i]=a.cnt[i]+b.cnt[i];
-            c.cnt[i]==0 ? : c.sum++;
+void dfs(int pos, int power, int green, int blue){
+    ans=max(ans, pos);
+    // 2 3 4 6 12
+    if (pos==n){
+        return;
+    }else if (power>v[pos]){
+        dfs(pos+1, power+v[pos]/2, green, blue);
+    }else if (power*12<=v[pos]){
+        ans=max(ans, pos);
+        return;
+    }else{
+        if (power*2>v[pos] && green>=1 && blue>=0){
+            dfs(pos+1, power*2+v[pos]/2, green-1, blue);
         }
-        return c;
-    }
-
-    void build(vector<int> *a, int idx, int ll, int rr){
-        if (rr-ll==1){
-            seg[idx].sum=1;
-            seg[idx].cnt[(*a)[ll]]=1;
-            return;
+        if (power*3>v[pos] && green>=0 && blue>=1){
+            dfs(pos+1, power*3+v[pos]/2, green, blue-1);
         }
-        int mid=(ll+rr)/2;
-
-        build(a, idx*2+1, ll, mid);
-        build(a, idx*2+2, mid, rr);
-        seg[idx]=combine(seg[2*idx+1], seg[2*idx+2]);
-    }
-
-    void update(int pos, int idx, int ll, int rr, int val){
-        if (rr-ll==1){
-            seg[idx].sum=1;
-            seg[idx].cnt[v[ll]]=0;
-            seg[idx].cnt[val]=1;
-            return;
+        if (power*4>v[pos] && green>=2 && blue>=0){
+            dfs(pos+1, power*4+v[pos]/2, green-2, blue);
         }
-        int mid=(ll+rr)/2;
-        if (pos<mid) update(pos, 2*idx+1, ll, mid, val);
-        else update(pos, 2*idx+2, mid, rr, val);
-
-        seg[idx]=combine(seg[2*idx+1], seg[2*idx+2]);
-    }
-
-    node query(int idx, int ll, int rr, int ql, int qr){
-        if (rr<=ql || qr<=ll) return node();
-        else if (ql<=ll && rr<=qr) return seg[idx];
-        else{
-            node n;
-            int mid=ll+(rr-ll)/2;
-            return combine(query(2*idx+1, ll, mid, ql, qr), query(2*idx+2, mid, rr, ql, qr));
+        if (power*6>v[pos] && green>=1 && blue>=1){
+            dfs(pos+1, power*6+v[pos]/2, green-1, blue-1);
+        }
+        if (power*12>v[pos] && green>=2 && blue>=1){
+            dfs(pos+1, power*12+v[pos]/2, green-2, blue-1);
         }
     }
-
-} ST;
+}
 
 void solve(){
+    // init
+    ans=0;
+    v.clear();
+
     // input
-    cin >> n >> q;
-    for (int i=1 ; i<=n ; i++){
+    cin >> n >> m;
+    for (int i=0 ; i<n ; i++){
         cin >> tmp;
         v.push_back(tmp);
     }
+    sort(v.begin(), v.end());
 
-    // build
-    ST.build(&v, 0, 0, n);
+    // process
+    dfs(0, m, 2, 1);
 
-    // query
-    for (int i=1 ; i<=q ; i++){
-        cin >> t >> x >> y;
-
-        if (t==1){
-            // find inversion
-            cout << ST.query(0, 0, n, x-1, y).sum << endl;
-        }else{
-            // update
-            ST.update(x-1, 0, 0, n, y);
-            v[x-1]=y;
-        }
-    }
+    // output
+    cout << ans << endl;
+    
     return;
 }
 
@@ -128,6 +107,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

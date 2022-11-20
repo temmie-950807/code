@@ -36,93 +36,88 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q, tmp;
-int t, x, y;
-vector<int> v;
-
-struct segment_tree{
-    // [ll, rr)
-    struct node{
-        int sum;
-        int cnt[50];
-    } seg[4*MAX_SIZE];
-
-    node combine(node a, node b){
-        int inv;
-        node c;
-
-        c.sum=a.sum+b.sum;
-        for (int i=1 ; i<=40 ; i++){
-            for (int j=1 ; j<=i-1 ; j++){
-                c.sum+=a.cnt[i]*b.cnt[j];
-            }
-            c.cnt[i]=a.cnt[i]+b.cnt[i];
-        }
-        return c;
-    }
-
-    void build(vector<int> *a, int idx, int ll, int rr){
-        if (rr-ll==1){
-            seg[idx].sum=0;
-            seg[idx].cnt[(*a)[ll]]=1;
-            return;
-        }
-        int mid=(ll+rr)/2;
-
-        build(a, idx*2+1, ll, mid);
-        build(a, idx*2+2, mid, rr);
-        seg[idx]=combine(seg[2*idx+1], seg[2*idx+2]);
-    }
-
-    void update(int pos, int idx, int ll, int rr, int val){
-        if (rr-ll==1){
-            seg[idx].sum=0;
-            seg[idx].cnt[v[ll]]=0;
-            seg[idx].cnt[val]=1;
-            return;
-        }
-        int mid=(ll+rr)/2;
-        if (pos<mid) update(pos, 2*idx+1, ll, mid, val);
-        else update(pos, 2*idx+2, mid, rr, val);
-
-        seg[idx]=combine(seg[2*idx+1], seg[2*idx+2]);
-    }
-
-    node query(int idx, int ll, int rr, int ql, int qr){
-        if (rr<=ql || qr<=ll) return node();
-        else if (ql<=ll && rr<=qr) return seg[idx];
-        else{
-            node n;
-            int mid=ll+(rr-ll)/2;
-            return combine(query(2*idx+1, ll, mid, ql, qr), query(2*idx+2, mid, rr, ql, qr));
-        }
-    }
-
-} ST;
+int n, m, tmp;
+vector<int> a(1), b(1);
+int dp[1005][1005], ma[1005][1005];
 
 void solve(){
     // input
-    cin >> n >> q;
-    for (int i=1 ; i<=n ; i++){
+    cin >> n >> m;
+    for (int i=0 ; i<n ; i++){
         cin >> tmp;
-        v.push_back(tmp);
+        a.push_back(tmp);
+    }
+    for (int i=0 ; i<m ; i++){
+        cin >> tmp;
+        b.push_back(tmp);
     }
 
-    // build
-    ST.build(&v, 0, 0, n);
-
-    // query
-    for (int i=1 ; i<=q ; i++){
-        cin >> t >> x >> y;
-
-        if (t==1){
-            // find inversion
-            cout << ST.query(0, 0, n, x-1, y).sum << endl;
+    // process - DP
+    for (int i=1 ; i<=n ; i++){
+        if (dp[i-1][0]+a[i]<0){
+            dp[i][0]=-INF;
+            ma[i][0]=-INF;
         }else{
-            // update
-            ST.update(x-1, 0, 0, n, y);
-            v[x-1]=y;
+            dp[i][0]=dp[i-1][0]+a[i];
+            ma[i][0]=max(ma[i-1][0], dp[i][0]);
         }
+    }
+    for (int j=1 ; j<=m ; j++){
+        if (dp[0][j-1]+b[j]<0){
+            dp[0][j]=-INF;
+            ma[0][j]=-INF;
+        }else{
+            dp[0][j]=dp[0][j-1]+b[j];
+            ma[0][j]=max(ma[0][j-1], dp[0][j]);
+        }
+    }
+
+    for (int i=1 ; i<=n ; i++){
+        for (int j=1 ; j<=m ; j++){
+            if (dp[i-1][j]+a[i]<0 && dp[i][j-1]+b[j]<0){
+                dp[i][j]=-INF;
+                ma[i][j]=-INF;
+
+            }else if (dp[i-1][j]+a[i]<0){
+                dp[i][j]=dp[i][j-1]+b[j];
+                ma[i][j]=max(ma[i][j-1], dp[i][j]);
+                if (dp[i][j]<0){
+                    dp[i][j]=-INF;
+                    ma[i][j]=-INF;
+                }
+
+            }else if (dp[i][j-1]+b[j]<0){
+                dp[i][j]=dp[i-1][j]+a[i];
+                ma[i][j]=max(ma[i-1][j], dp[i][j]);
+                if (dp[i][j]<0){
+                    dp[i][j]=-INF;
+                    ma[i][j]=-INF;
+                }
+
+            }else {
+                if (max(ma[i-1][j], dp[i-1][j]+a[i])<=max(ma[i][j-1], dp[i][j-1]+b[j])){
+                    dp[i][j]=dp[i-1][j]+a[i];
+                    ma[i][j]=max(ma[i-1][j], dp[i][j]);
+                    if (dp[i][j]<0){
+                        dp[i][j]=-INF;
+                        ma[i][j]=-INF;
+                    }
+                }else{
+                    dp[i][j]=dp[i][j-1]+b[j];
+                    ma[i][j]=max(ma[i][j-1], dp[i][j]);
+                    if (dp[i][j]<0){
+                        dp[i][j]=-INF;
+                        ma[i][j]=-INF;
+                    }
+                }
+            }
+        }
+    }
+
+    if (ma[n][m]==-INF){
+        cout << -1 << endl;
+    }else{
+        cout << ma[n][m] << endl;
     }
     return;
 }

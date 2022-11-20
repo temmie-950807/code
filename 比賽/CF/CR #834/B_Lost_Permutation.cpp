@@ -49,12 +49,45 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-
+int n, m, tmp;
+bitset<200> v;
 
 void solve(){
+    // init
+    v=0;
 
-    int *n;
+    // input
+    cin >> n >> m;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        v[tmp]=1;
+    }
 
+    int i=1;
+    while (m>0){
+        if (v[i]==0){
+            v[i]=1;
+            m-=i;
+        }
+        i++;
+    }
+
+    if (m==0){
+        int c1=0, c2=0;
+        for (int j=0 ; j<=200 ; j++){
+            if (c1==0 && c2==0 && v[j]==1){
+                c1=1;
+            }else if (c1==1 && c2==0 && v[j]==0){
+                c2=1;
+            }else if (c1==1 && c2==1 && v[j]==1){
+                cout << "NO" << endl;
+                return;
+            }
+        }
+        cout << "YES" << endl;
+    }else{
+        cout << "NO" << endl;
+    }
     return;
 }
 
@@ -62,6 +95,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

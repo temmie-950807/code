@@ -44,17 +44,59 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-
+int n, tmp;
+vector<int> v, op(MAX_SIZE);
+bitset<MAX_SIZE> vis;
+order_set os;
 
 void solve(){
+    // init
+    vis=0;
+    v.clear();
+    os.clear();
 
-    int *n;
+    // input
+    cin >> n;
+    fill(op.begin(), op.begin()+n, 0);
+    for (int i=1 ; i<=n ; i++){
+        os.insert(i);
+    }
+    for (int i=0 ; i<n/2 ; i++){
+        cin >> tmp;
+        v.push_back(tmp);
+        os.erase(tmp);
+    }
 
+
+    // process
+    for (int i=n/2-1 ; i>=0 ; i--){
+        op[i*2+1]=v[i];
+
+        int k=os.order_of_key(v[i]);
+        if (k==0){
+            cout << -1 << endl;
+            return;
+        }else{
+            op[i*2]=*os.find_by_order(k-1);
+            os.erase(op[i*2]);
+        }
+    }
+
+    // output
+    for (int i=0 ; i<n ; i++){
+        if (vis[op[i]]==0){
+            vis[op[i]]=1;
+        }else{
+            cout << -1 << endl;
+            return;
+        }
+    }
+    debug(op, n);
     return;
 }
 
@@ -62,6 +104,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

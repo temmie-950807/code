@@ -49,12 +49,31 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-
+int now=0;
+string s;
+const char c[3]={'Y', 'e', 's'};
 
 void solve(){
+    cin >> s;
+    if (s[0]==c[0]){
+        now=0;
+    }else if (s[0]==c[1]){
+        now=1;
+    }else if (s[0]==c[2]){
+        now=2;
+    }else{
+        cout << "NO" << endl;
+        return;
+    }
 
-    int *n;
-
+    for (int i=1 ; i<s.size() ; i++){
+        now=(now+1)%3;
+        if (s[i]!=c[now]){
+            cout << "NO" << endl;
+            return;
+        }
+    }
+    cout << "YES" << endl;
     return;
 }
 
@@ -62,6 +81,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

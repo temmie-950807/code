@@ -36,20 +36,49 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int a, b, c, d;
-vector<int> dp(MAX_SIZE); // dp[i]=numbers of pair (gcd is i)
+int n, ans;
+string s, t, tmp;
+vector<string> suf, pre;
 
 void solve(){
-    cin >> a >> b >> c >> d;
+    // input
+    cin >> s >> n;
 
-    // transform (large i to 1)
-    // dp[i*k]-dp[i*k & k!=i]=dp[i];
-    for (int i=MAX_SIZE ; i>=1 ; i--){
-        dp[i]=(b/i-(a-1)/i)*(d/i-(c-1)/i);
-        for (int j=i ; j<MAX_SIZE ; j+=i){
-            
-        }
+    // process
+    tmp="";
+    for (int i=s.size()-1 ; i>=0 ; i--){
+        tmp=s[i]+tmp;
+        suf.push_back(tmp);
     }
+    sort(suf.begin(), suf.end());
+
+    for (int i=0 ; i<n ; i++){
+        // init
+        pre.clear();
+        tmp="";
+        ans=-1;
+
+        // input
+        cin >> t;
+        for (int j=0 ; j<t.size() ; j++){
+            tmp+=t[j];
+            pre.push_back(tmp);
+        }
+
+        // process
+        for (auto x : pre){
+            if (binary_search(suf.begin(), suf.end(), x)==1){
+                if (ans==-1){
+                    ans=(int)min(x.size(), t.size()-x.size());
+                }else{
+                    ans=max(ans, (int)min(x.size(), t.size()-x.size()));
+                }
+            }
+        }
+        // output
+        cout << ans << endl;
+    }
+
     return;
 }
 
