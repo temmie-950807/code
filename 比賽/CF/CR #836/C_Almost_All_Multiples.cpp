@@ -44,16 +44,96 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+int n, x;
+vector<int> v(MAX_SIZE);
 
-void solve(){
+bool is_prime(int x){
+    for (int i=2 ; i*i<=x ; i++){
+        if (x%i==0){
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void solve1(){
+    // input
+    cin >> n >> x;
+
+    // init
+    fill(v.begin(), v.begin()+n+3, 0);
+
+    // process
+    v[1]=x;
+    v[n]=1;
+    for (int i=2 ; i<n ; i++){
+        if (i==x){
+            v[i]=n;
+        }else{
+            v[i]=i;
+        }
+    }
+
+    if (x!=n && !(n%x==0)){
+        cout << -1 << endl;
+        return;
+    }
+
+    int now=n, now_i=x;
+    for (int i=2 ; i<n ; i++){
+        if (i%now_i==0 && now%i==0){
+            swap(v[now_i], v[i]);
+            now_i=i;
+        }
+    }
+
+    // preview
+    for (int i=1 ; i<=n ; i++){
+        cout << v[i] << " ";
+    }
+    cout << endl;
     
+    return;
+}
+
+void solve2(){
+    // input
+    cin >> n >> x;
+
+    // init
+    v.clear();
+
+    for (int i=2 ; i<=n ; i++){
+        if (i==x) continue;
+        else v.push_back(i);
+    }
+
+    // process
+    do{
+        bool check=1;
+        for (int i=2 ; i<n ; i++){
+            if (v[i-2]%i!=0){
+                check=0;
+                break;
+            }
+        }
+
+        if (check){
+            cout << x << " ";
+            for (auto y : v){
+                cout << y << " ";
+            }
+            cout << 1 << endl;
+            return;
+        }
+    } while (next_permutation(v.begin(), v.end()));
+    
+    cout << -1 << endl;
     return;
 }
 
@@ -63,7 +143,7 @@ signed main(void){
     int t=1;
     cin >> t;
     while (t--){
-        solve();
+        solve1();
     }
     return 0;
 }

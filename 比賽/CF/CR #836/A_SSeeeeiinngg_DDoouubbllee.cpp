@@ -49,11 +49,13 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+string s;
 
 void solve(){
-    
+    cin >> s;
+    cout << s;
+    reverse(s.begin(), s.end());
+    cout << s << endl;
     return;
 }
 
