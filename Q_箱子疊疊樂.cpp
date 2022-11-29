@@ -3,6 +3,7 @@
 #include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma comment(linker, "/STACK:1024000000,1024000000")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
 #if !LOCAL
@@ -49,84 +50,89 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q, shift=0;
-int type, a, b;
-vector<int> dsu(MAX_SIZE), v(MAX_SIZE), sz(MAX_SIZE); // 邊儲存xor後的結果
+int n, k, q;
+int l, r, s;
+map<int, int> ss;
+vector<pair<int, int>> wa;
 
 // function
-int find(int x, int &dif){
-    while (x!=dsu[x]){
-        dif^=v[x];
-        x=dsu[x];
+void split(map<int, int> &ss, int pos){
+    auto it=ss.lower_bound(pos);
+    if (it->first != pos){ // 尋找有沒有pos這個紀錄
+        // 如果沒有就去找目前的值是多少，並且新增進去
+        int tmp=prev(it)->second;
+        ss[pos]=tmp;
     }
-    return x;
+
+}
+
+void ins(map<int, int> &ss, int l, int r, int val){
+    auto it_l=ss.find(l);
+    auto it_r=ss.find(r);
+
+    for (auto it=it_l ; it!=it_r ; it++){
+        if (it->second && val>=it->second){
+            wa.push_back({it->first, 1});
+            wa.push_back({next(it)->first, -1});
+        }
+    }
+
+    it_l->second=s;
+    ss.erase(next(it_l), it_r);
 }
 
 void solve(){
     // input
-    cin >> n >> q;
+    cin >> n >> k >> q;
 
     // init
-    for (int i=1 ; i<=n ; i++){
-        dsu[i]=i;
-        sz[i]=1;
-    }
+    wa.clear();
+    ss.clear();
+    ss.insert({0, 0});
+    ss.insert({n+1, 0});
+    // 維護的為: {x, v}在[x, next(x))都是v
 
-    // queries
+    // operation
     for (int i=0 ; i<q ; i++){
-        cin >> type >> a >> b;
+        cin >> l >> r >> s;
+        r++;
 
-        if (type==0){
-            // connect edge
-            int x=(a+shift)%n;
-            int y=(b+shift)%n;
-            if (x==0) x=n;
-            if (y==0) y=n;
-
-            int dif=1;
-            x=find(x, dif);
-            y=find(y, dif);
-            if (sz[x]>sz[y]) swap(x, y);
-            v[x]=dif;
-
-            sz[y]+=sz[x];
-            dsu[x]=y;
-
-        }
-        if (type==1){
-            // check edge
-            int x=(a+shift)%n;
-            int y=(b+shift)%n;
-            if (x==0) x=n;
-            if (y==0) y=n;
-
-            int dif=0;
-            find(x, dif);
-            find(y, dif);
-
-            // cout << "shift: " << shift << " x: " << x << " y: " << y << endl;
-            if (dif){
-                cout << "NO" << endl;
-            }else{
-                cout << "YES" << endl;
-                shift++;
-            }
-
-        }
-
-        // debug(dsu, n+1);
-        // debug(dis, n+1);
-        // cout << "=============" << endl;
+        split(ss, l);
+        split(ss, r);
+        ins(ss, l, r, s);
     }
+
+    // get answer
+    int ans=0, now=0;
+    sort(wa.begin(), wa.end());
+
+    for (auto it=ss.begin() ; it->first!=n+1 ; it++){
+        if (it->second>0){
+            // 把所有覆蓋過的區間先加入答案
+            ans+=next(it)->first-it->first;
+        }
+    }
+
+    for (int i=0 ; i<(int)wa.size()-1 ; i++){
+        now+=wa[i].second;
+        if (now>0){
+            ans-=wa[i+1].first-wa[i].first;
+        }
+    }
+
+    // output
+    cout << ans << endl;
     return;
 }
 
 signed main(void){
     fastio;
-    
+
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }
     return 0;
 }
+

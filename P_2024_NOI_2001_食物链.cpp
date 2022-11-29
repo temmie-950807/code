@@ -44,80 +44,45 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 2e5+5;
+const int MAX_SIZE = 5e4+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q, shift=0;
-int type, a, b;
-vector<int> dsu(MAX_SIZE), v(MAX_SIZE), sz(MAX_SIZE); // 邊儲存xor後的結果
+int n, q;
+int type, x, y;
+int ans;
 
-// function
-int find(int x, int &dif){
-    while (x!=dsu[x]){
-        dif^=v[x];
-        x=dsu[x];
-    }
-    return x;
-}
+vector<int> dsu(MAX_SIZE), v(MAX_SIZE);
 
 void solve(){
     // input
     cin >> n >> q;
 
     // init
+    ans=0;
     for (int i=1 ; i<=n ; i++){
         dsu[i]=i;
-        sz[i]=1;
     }
 
     // queries
     for (int i=0 ; i<q ; i++){
-        cin >> type >> a >> b;
+        cin >> type >> x >> y;
 
-        if (type==0){
-            // connect edge
-            int x=(a+shift)%n;
-            int y=(b+shift)%n;
-            if (x==0) x=n;
-            if (y==0) y=n;
+        if (x>n || y>n){
+            ans++;
 
-            int dif=1;
-            x=find(x, dif);
-            y=find(y, dif);
-            if (sz[x]>sz[y]) swap(x, y);
-            v[x]=dif;
+        }else if (type==2 && x==y){
+            ans++;
 
-            sz[y]+=sz[x];
-            dsu[x]=y;
-
-        }
-        if (type==1){
-            // check edge
-            int x=(a+shift)%n;
-            int y=(b+shift)%n;
-            if (x==0) x=n;
-            if (y==0) y=n;
-
-            int dif=0;
-            find(x, dif);
-            find(y, dif);
-
-            // cout << "shift: " << shift << " x: " << x << " y: " << y << endl;
-            if (dif){
-                cout << "NO" << endl;
-            }else{
-                cout << "YES" << endl;
-                shift++;
+        }else{
+            if (type==1){
+                
             }
-
         }
-
-        // debug(dsu, n+1);
-        // debug(dis, n+1);
-        // cout << "=============" << endl;
     }
+
+    
     return;
 }
 

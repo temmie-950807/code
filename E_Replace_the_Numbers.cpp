@@ -44,80 +44,60 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 2e5+5;
+const int MAX_SIZE = 5e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q, shift=0;
-int type, a, b;
-vector<int> dsu(MAX_SIZE), v(MAX_SIZE), sz(MAX_SIZE); // 邊儲存xor後的結果
+struct qq{
+    int type;
+    int x;
+    int y;
+} q;
+
+int n, ma=-INF;
+vector<qq> ip;
+vector<int> op, dsu(MAX_SIZE);
 
 // function
-int find(int x, int &dif){
-    while (x!=dsu[x]){
-        dif^=v[x];
-        x=dsu[x];
-    }
-    return x;
-}
 
 void solve(){
     // input
-    cin >> n >> q;
+    cin >> n;
+    for (int i=0 ; i<n ; i++){
+        cin >> q.type;
 
+        if (q.type==1){
+            cin >> q.x;
+            ma=max(ma, q.x);
+        }else if (q.type==2){
+            cin >> q.x >> q.y;
+            ma=max(ma, q.x);
+            ma=max(ma, q.y);
+        }
+
+        ip.push_back(q);
+    }
+    
     // init
-    for (int i=1 ; i<=n ; i++){
+    for (int i=1 ; i<=ma ; i++){
         dsu[i]=i;
-        sz[i]=1;
     }
 
-    // queries
-    for (int i=0 ; i<q ; i++){
-        cin >> type >> a >> b;
-
-        if (type==0){
-            // connect edge
-            int x=(a+shift)%n;
-            int y=(b+shift)%n;
-            if (x==0) x=n;
-            if (y==0) y=n;
-
-            int dif=1;
-            x=find(x, dif);
-            y=find(y, dif);
-            if (sz[x]>sz[y]) swap(x, y);
-            v[x]=dif;
-
-            sz[y]+=sz[x];
-            dsu[x]=y;
-
+    // process
+    reverse(ip.begin(), ip.end());
+    for (int i=0 ; i<n ; i++){
+        if (ip[i].type==1){
+            op.push_back(dsu[ip[i].x]);
+        }else{
+            dsu[ip[i].x]=dsu[ip[i].y];
         }
-        if (type==1){
-            // check edge
-            int x=(a+shift)%n;
-            int y=(b+shift)%n;
-            if (x==0) x=n;
-            if (y==0) y=n;
-
-            int dif=0;
-            find(x, dif);
-            find(y, dif);
-
-            // cout << "shift: " << shift << " x: " << x << " y: " << y << endl;
-            if (dif){
-                cout << "NO" << endl;
-            }else{
-                cout << "YES" << endl;
-                shift++;
-            }
-
-        }
-
-        // debug(dsu, n+1);
-        // debug(dis, n+1);
-        // cout << "=============" << endl;
     }
+
+    // output
+    reverse(op.begin(), op.end());
+    debug(op);
+
     return;
 }
 

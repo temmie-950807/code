@@ -44,86 +44,98 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 2e5+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q, shift=0;
-int type, a, b;
-vector<int> dsu(MAX_SIZE), v(MAX_SIZE), sz(MAX_SIZE); // 邊儲存xor後的結果
+struct matrix{
+    int n, m;
+    vector<vector<int>> arr;
 
-// function
-int find(int x, int &dif){
-    while (x!=dsu[x]){
-        dif^=v[x];
-        x=dsu[x];
+    matrix(int _n=1, int _m=1){
+        n=_n;
+        m=_m;
+        arr.resize(n, vector<int>(m, 0));
     }
-    return x;
-}
+
+    void print(){
+        for (int i=0 ; i<n ; i++){
+            for (int j=0 ; j<m ; j++){
+                cout << arr[i][j] << " ";
+            }
+            cout << endl;
+        }
+    }
+
+    matrix operator * (matrix B){
+        matrix ret(n, B.m);
+
+        for (int i=0 ; i<n ; i++){
+            for (int j=0 ; j<B.m ; j++){
+                for (int k=0 ; k<m ; k++){
+                    ret.arr[i][j]+=arr[i][k]*B.arr[k][j];
+                }
+            }
+        }
+
+        return ret;
+    }
+};
+
+int n, m, q;
+int x, y, op, p, a, b;
+vector<int> v;
+vector<matrix> ip(1), pre;
 
 void solve(){
-    // input
-    cin >> n >> q;
-
     // init
-    for (int i=1 ; i<=n ; i++){
-        dsu[i]=i;
-        sz[i]=1;
+    matrix mat(3, 3);
+    mat.arr={{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    pre.push_back(mat);
+
+    // input
+    cin >> n;
+    for (int i=0 ; i<n ; i++){
+        matrix mat(1, 3);
+        cin >> x >> y;
+        mat.arr={{x, y, 1}};
+        ip.push_back(mat);
     }
 
+    // operation
+    cin >> m;
+    for (int i=0 ; i<m ; i++){
+        matrix mat(3, 3);
+        cin >> op;
+        if (op==3 || op==4) cin >> p;
+        
+        if (op==1){
+            mat.arr={{0, -1, 0}, {1, 0, 0}, {0, 0, 1}};
+        }else if (op==2){
+            mat.arr={{0, 1, 0}, {-1, 0, 0}, {0, 0, 1}};
+        }else if (op==3){
+            mat.arr={{-1, 0, 0}, {0, 1, 0}, {2*p, 0, 1}};
+        }else if (op==4){
+            mat.arr={{1, 0, 0}, {0, -1, 0}, {0, 2*p, 1}};
+        }
+        pre.push_back(pre.back()*mat);
+    }
+    
     // queries
+    cin >> q;
     for (int i=0 ; i<q ; i++){
-        cin >> type >> a >> b;
-
-        if (type==0){
-            // connect edge
-            int x=(a+shift)%n;
-            int y=(b+shift)%n;
-            if (x==0) x=n;
-            if (y==0) y=n;
-
-            int dif=1;
-            x=find(x, dif);
-            y=find(y, dif);
-            if (sz[x]>sz[y]) swap(x, y);
-            v[x]=dif;
-
-            sz[y]+=sz[x];
-            dsu[x]=y;
-
-        }
-        if (type==1){
-            // check edge
-            int x=(a+shift)%n;
-            int y=(b+shift)%n;
-            if (x==0) x=n;
-            if (y==0) y=n;
-
-            int dif=0;
-            find(x, dif);
-            find(y, dif);
-
-            // cout << "shift: " << shift << " x: " << x << " y: " << y << endl;
-            if (dif){
-                cout << "NO" << endl;
-            }else{
-                cout << "YES" << endl;
-                shift++;
-            }
-
-        }
-
-        // debug(dsu, n+1);
-        // debug(dis, n+1);
-        // cout << "=============" << endl;
+        cin >> a >> b;
+        
+        matrix mat=ip[b]*pre[a];
+        cout << mat.arr[0][0] << " " << mat.arr[0][1] << endl;
     }
     return;
 }
 
 signed main(void){
     fastio;
-    
+
     int t=1;
     while (t--){
         solve();
