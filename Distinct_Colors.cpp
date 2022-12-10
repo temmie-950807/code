@@ -44,50 +44,52 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 3e5+5;
+const int MAX_SIZE = 4e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q;
-int type, a, b, c;
-vector<int> dsu(MAX_SIZE), dis(MAX_SIZE);
+int n, tmp, a, b;
+vector<int> G[MAX_SIZE], op(MAX_SIZE);
+vector<set<int>> v(MAX_SIZE);
 
 // function
-void find(int x){
-    if (dsu[x]!=x){
-        int y=dsu[x];
-        find(y);
+void dfs(int x, int pre){
+    // cout << "x: " << x << endl;
 
-        dis[x]+=dis[y];
-        dsu[x]=dsu[y];
+    for (auto y : G[x]){
+        if (y==pre) continue;
+        dfs(y, x);
+
+        if (v[y].size()>v[x].size()) swap(v[x], v[y]);
+        v[x].insert(v[y].begin(), v[y].end());
     }
+
+    op[x]=v[x].size();
 }
 
 void solve(){
     // input
-    cin >> n >> q;
-
-    // init
+    cin >> n;
     for (int i=1 ; i<=n ; i++){
-        dsu[i]=i;
+        cin >> tmp;
+        v[i].insert(tmp);
+    }    
+
+    // edge
+    for (int i=1 ; i<n ; i++){
+        cin >> a >> b;
+        G[a].push_back(b);
+        G[b].push_back(a);
     }
 
-    // query
-    for (int i=0 ; i<q ; i++){
-        cin >> type;
+    // dfs
+    dfs(1, -1);
 
-        if (type==1){
-            cin >> a >> b;
-            dsu[a]=b; // b成為a的上司
-            dis[a]=1; // 需要經過一個人才能成為上司
-
-        }else{
-            cin >> c;
-            find(c);
-            cout << dis[c] << endl;
-        }
-    }
+    // output
+    for (int i=1 ; i<=n ; i++){
+        cout << op[i] << " ";
+    }   cout << endl;
     return;
 }
 

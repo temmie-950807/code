@@ -50,78 +50,64 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, k, q;
-int l, r, s;
-map<int, int> ss;
-vector<pair<int, int>> wa;
+int n, q, tmp;
+int type, a, b;
+vector<map<int, int>> v(MAX_SIZE);
+vector<int> dsu(MAX_SIZE), sz(MAX_SIZE, 1);
 
 // function
-void split(map<int, int> &ss, int pos){
-    auto it=ss.lower_bound(pos);
-    if (it->first != pos){ // 尋找有沒有pos這個紀錄
-        // 如果沒有就去找目前的值是多少，並且新增進去
-        int tmp=prev(it)->second;
-        ss[pos]=tmp;
-    }
-
+int _find(int x){
+    if (dsu[x]!=x) return dsu[x]=_find(dsu[x]);
+    else return x;
 }
 
-void ins(map<int, int> &ss, int l, int r, int val){
-    auto it_l=ss.find(l);
-    auto it_r=ss.find(r);
+void _union(int x, int y){
+    x=_find(x);
+    y=_find(y);
 
-    for (auto it=it_l ; it!=it_r ; it++){
-        if (it->second && val>=it->second){
-            wa.push_back({it->first, 1});
-            wa.push_back({next(it)->first, -1});
+    if (x!=y){
+        if (sz[x]>sz[y]) swap(x, y);
+
+        dsu[x]=dsu[y];
+        sz[y]+=sz[x];
+
+        for (auto z : v[x]){
+            v[y][z.first]+=z.second;
         }
+        v[x].clear();
     }
-
-    it_l->second=s;
-    ss.erase(next(it_l), it_r);
 }
 
 void solve(){
-    // input
-    cin >> n >> k >> q;
-
     // init
-    wa.clear();
-    ss.clear();
-    ss.insert({0, 0});
-    ss.insert({n+1, 0});
-    // 維護的為: {x, v}在[x, next(x))都是v
+    for (int i=0 ; i<MAX_SIZE ; i++){
+        dsu[i]=i;
+    }
 
-    // operation
+    // input
+    cin >> n >> q;
+    for (int i=1 ; i<=n ; i++){
+        cin >> tmp;
+        v[i][tmp]=1;
+    }
+
+    // queries
     for (int i=0 ; i<q ; i++){
-        cin >> l >> r >> s;
-        r++;
+        cin >> type >> a >> b;
 
-        split(ss, l);
-        split(ss, r);
-        ins(ss, l, r, s);
-    }
-
-    // get answer
-    int ans=0, now=0;
-    sort(wa.begin(), wa.end());
-
-    for (auto it=ss.begin() ; it->first!=n+1 ; it++){
-        if (it->second>0){
-            // 把所有覆蓋過的區間先加入答案
-            ans+=next(it)->first-it->first;
+        if (type==1){
+            _union(a, b);
+        }else{
+            cout <<v[_find(a)][b] << endl;
         }
-    }
 
-    for (int i=0 ; i<(int)wa.size()-1 ; i++){
-        now+=wa[i].second;
-        if (now>0){
-            ans-=wa[i+1].first-wa[i].first;
-        }
+        // for (int i=1 ; i<=n ; i++){
+        //     debug(v[i]);
+        // }
+        // cout << "=========" << endl;
+        // cout << "=========" << endl;
+        // cout << "=========" << endl;
     }
-
-    // output
-    cout << ans << endl;
     return;
 }
 
@@ -129,10 +115,8 @@ signed main(void){
     fastio;
 
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }
     return 0;
 }
-
