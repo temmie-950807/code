@@ -50,29 +50,38 @@ const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
 int n;
-int a, b, tmp;
+string s, pre;
+map<string, int> st;
 
 void solve(){
-    cin >> n;
-    cin >> a >> b;
+    // init
+    pre="";
+    st.clear();
 
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        tmp--;
+    // input
+    cin >> n >> s;
 
-        int cnt=0;
-        while (cnt<min(tmp, 500LL)){
-            cout << cnt << ": " << a+cnt << " " << b+cnt << " " << __gcd(a+cnt, b+cnt) << endl;
-            tmp++;
-            cnt++;
+    // process
+    for (int i=1 ; i<n ; i++){
+        string now="";
+        now+=s[i-1];
+        now+=s[i];
+
+        // cout << "now: " << now << endl;
+
+        st[now]++;
+        st[pre]--;
+
+        if (st[now]>1){
+            cout << "YES" << endl;
+            return;
         }
-        
 
-        // for (int i=0 ; i<=tmp ; i++){
+        st[pre]++;
+        pre=now;
+    }
 
-        // }
-    } 
-
+    cout << "NO" << endl;
     return;
 }
 
@@ -80,6 +89,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

@@ -3,7 +3,6 @@
 #include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-#pragma comment(linker, "/STACK:1024000000,1024000000")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
 #if !LOCAL
@@ -45,76 +44,54 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 2e5+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q, tmp;
-int type, a, b;
-vector<map<int, int>> v(MAX_SIZE);
-vector<int> dsu(MAX_SIZE), sz(MAX_SIZE, 1);
-
-// function
-int _find(int x){
-    if (dsu[x]!=x) return dsu[x]=_find(dsu[x]);
-    else return x;
-}
-
-void _union(int x, int y){
-    x=_find(x);
-    y=_find(y);
-
-    if (x!=y){
-        if (sz[x]>sz[y]) swap(x, y);
-
-        dsu[x]=dsu[y];
-        sz[y]+=sz[x];
-
-        for (auto z : v[x]){
-            v[y][z.first]+=z.second;
-        }
-        v[x].clear();
-    }
-}
+int n, mi, ma, mic, mac, tmp;
+vector<int> v;
 
 void solve(){
     // init
-    for (int i=0 ; i<MAX_SIZE ; i++){
-        dsu[i]=i;
-    }
+    mi=INF;
+    ma=-INF;
+    mic=0;
+    mac=0;
 
     // input
-    cin >> n >> q;
-    for (int i=1 ; i<=n ; i++){
+    cin >> n;
+    for (int i=0 ; i<n ; i++){
         cin >> tmp;
-        v[i][tmp]=1;
-    }
-
-    // queries
-    for (int i=0 ; i<q ; i++){
-        cin >> type >> a >> b;
-
-        if (type==1){
-            _union(a, b);
-        }else{
-            cout <<v[_find(a)][b] << endl;
+        if (tmp==mi){
+            mic++;
+        }else if (tmp<mi){
+            mi=tmp;
+            mic=1;
         }
 
-        // for (int i=1 ; i<=n ; i++){
-        //     debug(v[i]);
-        // }
-        // cout << "=========" << endl;
-        // cout << "=========" << endl;
-        // cout << "=========" << endl;
+        if (tmp==ma){
+            mac++;
+        }else if (tmp>ma){
+            ma=tmp;
+            mac=1;
+        }
+    }
+
+    // output
+    if (mi==ma){
+        cout << n*(n-1) << endl;
+    }else{
+        cout << mic*mac*2 << endl;
     }
     return;
 }
 
 signed main(void){
     fastio;
-
+    
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

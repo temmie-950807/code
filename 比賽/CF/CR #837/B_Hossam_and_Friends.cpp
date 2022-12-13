@@ -49,30 +49,32 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n;
-int a, b, tmp;
+int n, m;
+int x, y;
+vector<int> G[MAX_SIZE], dp(MAX_SIZE);
 
 void solve(){
-    cin >> n;
-    cin >> a >> b;
+    // init
+    cin >> n >> m;
+    for (int i=0 ; i<=n ; i++){
+        G[i].clear();
+        dp[i]=0;
+    }
+    for (int i=0 ; i<m ; i++){
+        cin >> x >> y;
+        G[max(x, y)].push_back(min(x, y));
+    }
 
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        tmp--;
+    // get answer
+    int ans=0, now=0;
+    for (int i=1 ; i<=n ; i++){
+        G[i].push_back(0);
+        now=max(now, *max_element(G[i].begin(), G[i].end()));
+        ans+=i-now;
+    }
 
-        int cnt=0;
-        while (cnt<min(tmp, 500LL)){
-            cout << cnt << ": " << a+cnt << " " << b+cnt << " " << __gcd(a+cnt, b+cnt) << endl;
-            tmp++;
-            cnt++;
-        }
-        
-
-        // for (int i=0 ; i<=tmp ; i++){
-
-        // }
-    } 
-
+    // output
+    cout << ans << endl;
     return;
 }
 
@@ -80,6 +82,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

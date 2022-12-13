@@ -44,52 +44,33 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 4e5+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, a, b;
-vector<int> G[MAX_SIZE], op(MAX_SIZE);
-vector<set<int>> v(MAX_SIZE);
-
-// function
-void dfs(int x, int pre){
-    // cout << "x: " << x << endl;
-
-    for (auto y : G[x]){
-        if (y==pre) continue;
-        dfs(y, x);
-
-        if (v[y].size()>v[x].size()) swap(v[x], v[y]);
-        v[x].insert(v[y].begin(), v[y].end());
-    }
-
-    op[x]=v[x].size();
-}
+int n, ans;
 
 void solve(){
+    // init
+    ans=0;
+
     // input
-    cin >> n;
-    for (int i=1 ; i<=n ; i++){
-        cin >> tmp;
-        v[i].insert(tmp);
-    }    
-
-    // edge
-    for (int i=1 ; i<n ; i++){
-        cin >> a >> b;
-        G[a].push_back(b);
-        G[b].push_back(a);
+    cin >> n;    
+    
+    int now=1;
+    for (int i=0 ; i<=6 ; i++){
+        for (int j=1 ; j<=9 ; j++){
+            if (now*j<=n){
+                ans++;
+            }else{
+                cout << ans << endl;
+                return;
+            }
+        }
+        now*=10;
     }
-
-    // dfs
-    dfs(1, -1);
-
-    // output
-    for (int i=1 ; i<=n ; i++){
-        cout << op[i] << " ";
-    }   cout << endl;
+    cout << ans << endl;
     return;
 }
 
@@ -97,6 +78,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

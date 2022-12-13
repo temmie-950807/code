@@ -44,35 +44,83 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n;
-int a, b, tmp;
+int n, cnt;
+string s1, s2;
+vector<pair<int, int>> v;
 
 void solve(){
-    cin >> n;
-    cin >> a >> b;
+    // input
+    cin >> n >> s1 >> s2;
 
+    // init
+    v.clear();
+    v.push_back({0, 1});
     for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        tmp--;
-
-        int cnt=0;
-        while (cnt<min(tmp, 500LL)){
-            cout << cnt << ": " << a+cnt << " " << b+cnt << " " << __gcd(a+cnt, b+cnt) << endl;
-            tmp++;
-            cnt++;
+        if (s1[i]=='W' && s2[i]=='B'){
+            if (v.back().first==1){
+                v.back().second++;
+            }else{
+                v.push_back({1, 1});
+            }
         }
-        
+        if (s1[i]=='B' && s2[i]=='B'){
+            if (v.back().first==2){
+                v.back().second++;
+            }else{
+                v.push_back({2, 1});
+            }
+        }
+        if (s1[i]=='B' && s2[i]=='W'){
+            if (v.back().first==3){
+                v.back().second++;
+            }else{
+                v.push_back({3, 1});
+            }
+        }
+    }
+    v.push_back({0, 1});
 
-        // for (int i=0 ; i<=tmp ; i++){
+    // for (auto x : v){
+    //     cout << x.first << "-" << x.second << endl;
+    // }
 
-        // }
-    } 
 
+    // process
+    for (auto it=v.begin() ; it!=v.end() ; it++){
+
+        if (it->first==0) continue;
+        if (it->first==1){
+            if (prev(it)->first==3 || next(it)->first==3){
+                cout << "NO" << endl;
+                return;
+            }
+        }
+        if (it->first==3){
+            if (prev(it)->first==1 || next(it)->first==1){
+                cout << "NO" << endl;
+                return;
+            }
+        }
+        if (it->first==2){
+            if (prev(it)->first==0 || next(it)->first==0) continue;
+            if (it->second%2==0 && prev(it)->first!=next(it)->first){
+                cout << "NO" << endl;
+                return;
+            }
+            if (it->second%2==1 && prev(it)->first==next(it)->first){
+                cout << "NO" << endl;
+                return;
+            }
+        }
+    }
+    
+    cout << "YES" << endl;
+    
     return;
 }
 
@@ -80,6 +128,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

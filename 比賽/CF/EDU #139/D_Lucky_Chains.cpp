@@ -1,30 +1,12 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
-#define int long long
+// #define int long long
 #if !LOCAL
 #define endl "\n"
 #endif
 using namespace std;
-using namespace __gnu_pbds;
-typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
-struct custom_hash {
-    static uint64_t splitmix64(uint64_t x) {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
 
 // debugger
 // ===================================
@@ -44,44 +26,105 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
-const int INF = 1e18;
-const int MOD = 1e9+7;
-const double EPS = 1e-6;
+const int INF = 1e9;
 
-int n;
-int a, b, tmp;
+int n, a, b;
+vector<int> prime, is_prime(3200);
 
-void solve(){
-    cin >> n;
-    cin >> a >> b;
-
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        tmp--;
-
-        int cnt=0;
-        while (cnt<min(tmp, 500LL)){
-            cout << cnt << ": " << a+cnt << " " << b+cnt << " " << __gcd(a+cnt, b+cnt) << endl;
-            tmp++;
-            cnt++;
+// function
+void get_prime(){
+    for (int i=2 ; i<3200 ; i++){
+        if (!is_prime[i]){
+            prime.push_back(i);
+            for (int j=i ; j<3200 ; j+=i){
+                if (!is_prime[j]) is_prime[j]=i;
+            }
         }
-        
+    }
+}
 
-        // for (int i=0 ; i<=tmp ; i++){
+// fast IO
+inline char readchar(){
+    static char buffer[BUFSIZ], * now = buffer + BUFSIZ, * end = buffer + BUFSIZ;
+    if (now == end)
+    {
+        if (end < buffer + BUFSIZ)
+            return EOF;
+        end = (buffer + fread(buffer, 1, BUFSIZ, stdin));
+        now = buffer;
+    }
+    return *now++;
+}
+inline int nextint(){
+    int x = 0, c = readchar(), neg = false;
+    while(('0' > c || c > '9') && c!='-' && c!=EOF) c = readchar();
+    if(c == '-') neg = true, c = readchar();
+    while('0' <= c && c <= '9') x = x*10 + (c^'0'), c = readchar();
+    if(neg) x = -x;
+    return x; // returns 0 if EOF
+}
 
-        // }
-    } 
+void solve1(){
+    // input
+    a=nextint();
+    b=nextint();
 
+    // check 1
+    for (int i=0 ; i<10 ; i++){
+        if (__gcd(a+i, b+i)!=1){
+            cout << i << endl;
+            return;
+        }
+    }
+
+    // check 2
+    int kk=b-a, mi=INF;
+
+    for (auto x : prime){
+        if (x>kk || kk==1) break;
+        if (kk%x==0){
+            mi=min(mi, (a/x+1)*x-a);
+        }
+        while (kk%x==0) kk/=x;
+    }
+    if (kk!=1){
+        mi=min(mi, (a/kk+1)*kk-a);
+    }
+
+    if (mi==INF){
+        cout << -1 << endl;
+    }else{
+        cout << mi << endl;
+    }
+
+    return;
+}
+
+void solve2(){
+
+    int a, b;
+
+    cin >> a >> b;
+    for (int i=0 ; i<500000 ; i++){
+        if (__gcd(a+i, b+i)!=1){
+            cout << i << endl;
+            return;
+        }
+    }
+
+    cout << -1 << endl;
     return;
 }
 
 signed main(void){
     fastio;
+
+    get_prime();
     
     int t=1;
+    t=nextint();
     while (t--){
-        solve();
+        solve1();
     }
     return 0;
 }
