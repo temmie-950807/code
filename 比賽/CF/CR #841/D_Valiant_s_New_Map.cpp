@@ -44,20 +44,78 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 1e6+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+int n, m;
+vector<vector<int>> arr;
+
+const int N = 1005, LG = 11;
+
+int st[N][N][LG][LG];
+int a[N][N], lg2[N];
+
+int yo(int x1, int y1, int x2, int y2) {
+  x2++;
+  y2++;
+  int a = lg2[x2 - x1], b = lg2[y2 - y1];
+  return min(
+         min(st[x1][y1][a][b], st[x2 - (1 << a)][y1][a][b]),
+         min(st[x1][y2 - (1 << b)][a][b], st[x2 - (1 << a)][y2 - (1 << b)][a][b])
+       );
+}
+
+void build(int n, int m) { // 0 indexed
+  for (int i = 2; i < N; i++) lg2[i] = lg2[i >> 1] + 1;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      st[i][j][0][0] = a[i][j];
+    }
+  }
+  for (int a = 0; a < LG; a++) {
+    for (int b = 0; b < LG; b++) {
+      if (a + b == 0) continue;
+      for (int i = 0; i + (1 << a) <= n; i++) {
+        for (int j = 0; j + (1 << b) <= m; j++) {
+          if (!a) {
+            st[i][j][a][b] = max(st[i][j][a][b - 1], st[i][j + (1 << (b - 1))][a][b - 1]);
+          } else {
+            st[i][j][a][b] = max(st[i][j][a - 1][b], st[i + (1 << (a - 1))][j][a - 1][b]);
+          }
+        }
+      }
+    }
+  }
+}
+
+// function
+bool check(int mid){
+    
+}
 
 void solve(){
     // input
-    cin >> n;
+    cin >> n >> m;
+    arr.resize(n, vector<int>(m, 0));
     for (int i=0 ; i<n ; i++){
-        
+        for (int j=0 ; j<n ; j++){
+            cin >> arr[i][j];
+        }
     }
+
+    // binary search answer
+    int ll=1, rr=min(n, m)+1, mid, ans=-INF;
+    while (ll<rr){
+        mid=ll+(rr-ll)/2;
+        if (check(mid)){
+            ll=mid+1;
+        }else{
+            rr=mid;
+        }
+    }
+    
     return;
 }
 
@@ -65,6 +123,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

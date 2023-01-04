@@ -3,6 +3,7 @@
 #include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma comment(linker, "/STACK:1024000000,1024000000")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
 #if !LOCAL
@@ -44,26 +45,88 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 1e5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+int ans=0;
+double x, y, r;
+int tmp_x, tmp_y, tmp_r;
+int ll, rr;
+double uu, dd;
+
+int get_value(int x){
+    int ll=tmp_y, rr=tmp_y+tmp_r+1, mid, ans1=0, ans2=0;
+    while (ll<rr){
+        mid=ll+(rr-ll)/2;
+        if ((tmp_x-x)*(tmp_x-x)+(tmp_y-mid)*(tmp_y-mid)<=tmp_r*tmp_r){
+            ans1=mid;
+            ll=mid+1;
+        }else{
+            rr=mid;
+        }
+    }
+
+    ll=tmp_y-tmp_r, rr=tmp_y+1;
+    while (ll<rr){
+        mid=ll+(rr-ll)/2;
+        if ((tmp_x-x)*(tmp_x-x)+(tmp_y-mid)*(tmp_y-mid)<=tmp_r*tmp_r){
+            ans2=mid;
+            rr=mid;
+        }else{
+            ll=mid+1;
+        }
+    }
+
+    // cout << "ans1: " << ans1 << " ans2: " << ans2 << endl;
+    return floor(ans1/10000.0)-ceil(ans2/10000.0)+1;
+}
+
+double sqrt(int num){
+    double l=0, r=INF, mid;
+    for (int i=0 ; i<150 ; i++){
+        mid=(l+r)/2;
+        if (mid*mid>=num){
+            r=mid;
+        }else{
+            l=mid;
+        }
+    }
+    return mid;
+}
 
 void solve(){
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        
+    cin >> x >> y >> r;
+    tmp_x=x*10000;
+    tmp_y=y*10000;
+    tmp_r=r*10000;
+
+    ll=ceil((tmp_x-tmp_r)/10000.0)*10000;
+    rr=floor((tmp_x+tmp_r)/10000.0)*10000;
+
+    // preview
+    cout << "x: " << tmp_x << " y: " << tmp_y << " r: " << tmp_r << endl;
+    cout << ll << " " << rr << endl;
+    cout << "\n================\n\n";
+
+
+    // get answer
+    for (int i=ll ; i<=rr ; i+=10000){
+        // sensor line
+        ans+=get_value(i);
+        cout << "i: " << i << " get: " << get_value(i);
     }
+
+    // output
+    cout << ans << endl;
     return;
 }
 
 signed main(void){
     fastio;
-    
+
     int t=1;
     while (t--){
         solve();
