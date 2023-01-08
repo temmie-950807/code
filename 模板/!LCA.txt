@@ -1,0 +1,28 @@
+// 從第j點走2^i步可以到的地方
+int now=1;
+while ((1<<now)<=n){
+    for (int i=1 ; i<=n ; i++) dp[now][i]=dp[now-1][dp[now-1][i]];
+    now++;
+}
+
+// LCA二分搜
+int _move(int node, int step){
+    int kk=0;
+
+    while (step){
+        if (step&1){
+            node=dp[kk][node];
+        }
+
+        kk++;
+        step>>=1;
+    }
+
+    return (node==0 ? -1 : node);
+}
+
+// LCA步驟
+1. 求得所有點的深度
+2. 先把兩個節點走到同一個深度
+3. 二分搜需要走的步數
+4. 回傳答案

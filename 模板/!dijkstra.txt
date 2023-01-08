@@ -1,0 +1,24 @@
+vector<pair<int, int>> G[MAX_SIZE]; // <weight, to>
+priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; // <weight, to>
+bitset<MAX_SIZE> vis;
+
+dis[1]=0;
+vis[1]=1;
+for (auto x : G[1]){
+    pq.push(x);
+}
+
+while (pq.size()){
+    pair<int, int> now=pq.top();
+    pq.pop();
+
+    if (vis[now.second]==1) continue;
+    else{
+        vis[now.second]=1;
+        dis[now.second]=now.first;
+
+        for (auto x : G[now.second]){
+            pq.push({now.first+x.first, x.second});
+        }
+    }
+}

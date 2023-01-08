@@ -49,32 +49,37 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
+int n;
 vector<int> v;
-vector<vector<int>> ST(20, vector<int>());
 
-void build(){
-    for (int i=0 ; i<v.size() ; i++){
-        ST[0].push_back(v[i]);
-    }
-    int h=__lg(v.size()), len=1;
-    for (int i=1 ; i<=h ; i++){
-        for (int j=0 ; j<len<ST[i-1].size() ; j++){
-            ST[i].push_back(min(ST[i-1][j], ST[i-1][j+len]));
-        }
-        len<<=1;
-    }
-}
-
-int query(int ll, int rr){
-    // [ll, rr)
-    rr++;
-    int h=__lg(rr-ll);
-    return min(ST[h][ll], ST[h][rr-(1<<h)]);
-}
+int dis[520][520];
 
 void solve(){
-    
+    // input
+    cin >> n;
+    for (int i=1 ; i<=n ; i++){
+        for (int j=1 ; j<=n ; j++){
+            cin >> dis[i][j];
+        }
+    }
+
+    // folyd-warshall
+    for (int k=1 ; k<=n ; k++){
+        for (int i=1 ; i<=n ; i++){
+            for (int j=1 ; j<=n ; j++){
+                dis[i][j]=min(dis[i][j], dis[i][k]+dis[k][j]);
+            }
+        }
+    }
+
+    // get answer
+    int mi=INF;
+    for (int i=1 ; i<=n ; i++){
+        mi=min(mi, dis[i][i]);
+    }
+
+    // output
+    cout << mi << endl;
     return;
 }
 
@@ -82,7 +87,6 @@ signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }

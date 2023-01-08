@@ -44,37 +44,49 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = 1e5+5;
+const int MAX_SIZE = 5e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
-vector<vector<int>> ST(20, vector<int>());
+int n, m;
+int x, y;
+vector<int> v, dis(MAX_SIZE, INF), ans;
+vector<pair<int, int>> G[MAX_SIZE]; // <weight, to>
+bitset<MAX_SIZE> vis;
+priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; // <weight, to>
 
-void build(){
-    for (int i=0 ; i<v.size() ; i++){
-        ST[0].push_back(v[i]);
-    }
-    int h=__lg(v.size()), len=1;
-    for (int i=1 ; i<=h ; i++){
-        for (int j=0 ; j<len<ST[i-1].size() ; j++){
-            ST[i].push_back(min(ST[i-1][j], ST[i-1][j+len]));
-        }
-        len<<=1;
-    }
-}
 
-int query(int ll, int rr){
-    // [ll, rr)
-    rr++;
-    int h=__lg(rr-ll);
-    return min(ST[h][ll], ST[h][rr-(1<<h)]);
-}
 
 void solve(){
-    
+    // input
+    cin >> n >> m;
+    for (int i=0 ; i<m ; i++){
+        cin >> x >> y;
+        G[x].push_back({1, y});
+    }
+
+    // find shortest road
+    dis[1]=0;
+    vis[1]=1;
+    for (auto x : G[1]){
+        pq.push(x);
+    }
+
+    while (pq.size()){
+        pair<int, int> now=pq.top();
+        pq.pop();
+
+        if (vis[now.second]==1) continue;
+        else{
+            vis[now.second]=1;
+            dis[now.second]=now.first;
+
+            for (auto x : G[now.second]){
+                pq.push({now.first+x.first, x.second});
+            }
+        }
+    }
     return;
 }
 
@@ -82,7 +94,6 @@ signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }

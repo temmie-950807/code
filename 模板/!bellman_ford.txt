@@ -1,0 +1,27 @@
+int dis[MAX_SIZE];
+bool flag;
+
+flag=1;
+for (int i=1 ; i<=n && flag ; i++){
+    flag=0;
+    for (int j=0 ; j<m ; j++){
+        if (dis[u[j]]+w[j]<dis[v[j]]){
+            flag=1;
+            dis[v[j]]=dis[u[j]]+w[j];
+        }
+    }
+}
+
+if (flag==0){
+    // no cycle
+    cout << "NO" << endl;
+    return;
+}else{
+    // find postive cycle
+    for (int j=0 ; j<m ; j++){
+        if (dis[u[j]]+w[j]<dis[v[j]]){
+            cout << "YES" << endl;
+            return;
+        }
+    }
+}

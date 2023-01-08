@@ -48,39 +48,103 @@ const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
+const int prime[8]={2, 3, 5, 7, 11, 13, 17, 19};
 
-int n, tmp;
-vector<int> v;
-vector<vector<int>> ST(20, vector<int>());
+int l, r, p, ma, flag;
+gp_hash_table<int, string, custom_hash> cnt;
 
-void build(){
-    for (int i=0 ; i<v.size() ; i++){
-        ST[0].push_back(v[i]);
-    }
-    int h=__lg(v.size()), len=1;
-    for (int i=1 ; i<=h ; i++){
-        for (int j=0 ; j<len<ST[i-1].size() ; j++){
-            ST[i].push_back(min(ST[i-1][j], ST[i-1][j+len]));
+// function
+int qp(int b, int p, int m){
+    int ret=1;
+    while (p){
+        if (p&1){
+            ret=ret*b%m;
         }
-        len<<=1;
+
+        b=b*b%m;
+        p>>=1;
+    }
+
+    return ret;
+}
+
+void dfs_pre(string s){
+
+    if (s.size()==(l+1)/2){
+        int val=1;
+        for (int i=0 ; i<(l+1)/2 ; i++){
+            val=(val*qp(prime[i+l/2], s[i]-'A'+1, p))%p;
+        }
+        ma=max(ma, val);
+
+        auto it=cnt.find(val);
+        if (it==cnt.end()) cnt[val]=s;
+        else cnt[val]=min(s, cnt[val]);
+    }else{
+        for (int i=0 ; i<26 ; i++){
+            dfs_pre(s+(char)(i+'A'));
+        }
     }
 }
 
-int query(int ll, int rr){
-    // [ll, rr)
-    rr++;
-    int h=__lg(rr-ll);
-    return min(ST[h][ll], ST[h][rr-(1<<h)]);
+void dfs_suf(string s){
+    if (flag==1) return;
+    if (s.size()==l/2){
+        int val=1;
+        for (int i=0 ; i<l/2 ; i++){
+            val=(val*qp(prime[i], s[i]-'A'+1, p))%p;
+        }
+
+        int target=r*qp(val, p-2, p)%p;
+
+        if (cnt.find(target)!=cnt.end()){
+            cout << s << cnt[target] << endl;
+            flag=1;
+            return;
+        }
+    }else{
+        for (int i=0 ; i<26 & flag==0 ; i++){
+            dfs_suf(s+(char)(i+'A'));
+        }
+    }
 }
 
 void solve(){
-    
+    // init
+    ma=-INF;
+    flag=0;
+    cnt.clear();
+
+    // input
+    cin >> l >> r >> p;
+
+    // special case
+    if (l==1){
+        for (int i=1 ; i<=26 ; i++){
+            if (qp(2, i, p)==r){
+                cout << (char)('A'+i-1) << endl;
+                return;
+            }
+        }
+    }
+
+    // enumerate pre
+    dfs_pre("");
+
+    // enumerate suf
+    dfs_suf("");
+
+    // output
+    if (flag==0){
+        cout << "not a word" << endl;
+        return;
+    }
     return;
 }
 
 signed main(void){
     fastio;
-    
+
     int t=1;
     cin >> t;
     while (t--){
