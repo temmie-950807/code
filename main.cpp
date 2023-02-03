@@ -49,32 +49,57 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
-vector<vector<int>> ST(20, vector<int>());
+int n, m, k;
+int a, b;
+vector<int> G[MAX_SIZE];
+int dp[2][MAX_SIZE];
 
-void build(){
-    for (int i=0 ; i<v.size() ; i++){
-        ST[0].push_back(v[i]);
-    }
-    int h=__lg(v.size()), len=1;
-    for (int i=1 ; i<=h ; i++){
-        for (int j=0 ; j<len<ST[i-1].size() ; j++){
-            ST[i].push_back(min(ST[i-1][j], ST[i-1][j+len]));
-        }
-        len<<=1;
-    }
-}
-
-int query(int ll, int rr){
-    // [ll, rr)
-    rr++;
-    int h=__lg(rr-ll);
-    return min(ST[h][ll], ST[h][rr-(1<<h)]);
-}
 
 void solve(){
-    
+    // input
+    cin >> n >> m >> k;
+    for (int i=0 ; i<k ; i++){
+        cin >> a >> b;
+        G[a].push_back(b);
+    }
+
+    // dp
+    dp[1][1]=1;
+    for (int i=1 ; i<=n ; i++){
+        for (auto x : G[i]){
+            dp[i&1][x]=-i;
+        }
+
+        for (int j=1 ; j<=m ; j++){
+            if (i==1 && j==1) continue;
+            if (dp[i&1][j]==-i) continue;
+            // cout << "i: " << i << " j: " << j << endl;
+
+            dp[i&1][j]=0;
+
+            // 上面的路徑
+            if (dp[!(i&1)][j]>0){
+                dp[i&1][j]+=dp[!(i&1)][j];
+                if (dp[i&1][j]>=MOD){
+                    dp[i&1][j]-=MOD;
+                }
+            }
+            if (dp[i&1][j-1]>0){
+                dp[i&1][j]+=dp[i&1][j-1];
+                if (dp[i&1][j]>=MOD){
+                    dp[i&1][j]-=MOD;
+                }
+            }
+        }
+        
+        // for (int j=1 ; j<=m ; j++){
+        //     cout << dp[i&1][j] << " ";
+        // }   cout << endl;
+    }
+
+    // output
+    cout << dp[n&1][m] << endl;;
+
     return;
 }
 
@@ -82,7 +107,6 @@ signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }

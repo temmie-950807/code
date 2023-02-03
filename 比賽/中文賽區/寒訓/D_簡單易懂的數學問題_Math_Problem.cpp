@@ -44,36 +44,70 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int a, b;
+int x, y;
 
-void solve(){
+bool check1(int mid){
+    return a/mid<=b;
+}
+
+bool check2(int mid){
+    return a/mid<b;
+}
+
+void solve1(){
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+    cin >> a >> b;
+
+    // binary search
+    int ll=1, rr=a+2, mid;
+    while (ll<rr){
+        int mid=ll+(rr-ll)/2;
+        if (check1(mid)){
+            rr=mid;
+            x=mid;
+        }else{
+            ll=mid+1;
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    ll=1, rr=a+2;
+    while (ll<rr){
+        int mid=ll+(rr-ll)/2;
+        if (check2(mid)){
+            rr=mid;
+            y=mid;
+        }else{
+            ll=mid+1;
+        }
     }
 
     // output
-    cout << ans << endl;
+    cout << y-x << endl;
+    // cout << x << " " << y << endl;
+    
+    // 12
+    //  1 2 3 4 5 6 7 8 9 10 11 12
+    // 12 6 4 3 2 2 1 1 1  1  1  1
+
     return;
+}
+
+void solve2(){
+    // input
+    cin >> a >> b;
+
+    // process
+    x=a/b;
+    y=a/(b+1);
+
+    // output
+    cout << x-y << endl;
 }
 
 signed main(void){
@@ -81,7 +115,7 @@ signed main(void){
     
     int t=1;
     while (t--){
-        solve();
+        solve2();
     }
     return 0;
 }

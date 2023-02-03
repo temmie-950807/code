@@ -44,31 +44,40 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, ans=-INF;
+string s;
+vector<int> c1(30), c2(30);
+int cnt1=0, cnt2=0;
 
 void solve(){
+    // init
+    ans=-INF;
+    fill(c1.begin(), c1.end(), 0);
+    fill(c2.begin(), c2.end(), 0);
+    cnt1=0;
+    cnt2=0;
+
     // input
-    cin >> n;
+    cin >> n >> s;
     for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
+        c2[s[i]-'a']++;
+        if (c2[s[i]-'a']==1) cnt2++;
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
-        }
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    // process
+    for (int i=0 ; i<n-1 ; i++){
+        c1[s[i]-'a']++;
+        if (c1[s[i]-'a']==1) cnt1++;
+
+        c2[s[i]-'a']--;
+        if (c2[s[i]-'a']==0) cnt2--;
+
+        ans=max(ans, cnt1+cnt2);
     }
 
     // output
@@ -80,6 +89,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

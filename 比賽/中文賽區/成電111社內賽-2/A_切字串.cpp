@@ -44,35 +44,56 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
+int cnt;
+string s;
 vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int seg[305][305], dp[305][305];
 
 void solve(){
-    // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+    // split string
+    cin >> s;
+    s+="_";
+    for (int i=0 ; i<s.size() ; i++){
+        if (s[i]=='_'){
+            v.push_back(cnt);
+            cnt=0;
+        }else{
+            cnt++;
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    // seg init
+    for (int i=0 ; i<v.size() ; i++){
+        for (int j=0 ; j<v.size() ; j++){
+            if (i==j){
+                seg[i][j]=v[i];
+                dp[i][j]=0;
+            }else{
+                seg[i][j]=INF;
+                dp[i][j]=INF;
+            }
+        }
     }
 
-    // output
-    cout << ans << endl;
+    // seg
+    for (int r=0 ; r<v.size() ; r++){
+        for (int l=r-1 ; l>=0 ; l--){
+            for (int k=l ; k<r ; k++){
+                if (dp[l][k]+dp[k+1][r]+seg[l][k]+seg[k+1][r] < dp[l][r]){
+                    seg[l][r]=seg[l][k]+seg[k+1][r];
+                    dp[l][r]=dp[l][k]+dp[k+1][r]+seg[l][k]+seg[k+1][r];
+                }
+            }
+        }
+    }
+
+    cout << dp[0][v.size()-1] << endl;
+    
     return;
 }
 

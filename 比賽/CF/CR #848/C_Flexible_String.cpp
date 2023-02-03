@@ -44,31 +44,76 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, k;
+string s1, s2;
+
+vector<char> c;
+bitset<30> diff, now_change;
+int now_k, ans=0;
 
 void solve(){
+    // init
+    c.clear();
+    diff=0, now_change=0;
+    now_k=0;
+    ans=0;
+
     // input
-    cin >> n;
+    cin >> n >> k >> s1 >> s2;
+
+    // process
     for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+        if (s1[i]!=s2[i] && diff[s1[i]-'a']==0){
+            now_k++;
+            diff[s1[i]-'a']=1;
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+    k=min(k, now_k);
+    for (int i=0 ; i<26 ; i++){
+        if (diff[i]){
+            c.push_back(i+'a');
+        }
+    }
+
+    // enumerate
+    for (int i=0 ; i<(1<<c.size()) ; i++){
+        // init
+        int cnt=0;
+        now_change=0;
+        for (int j=0 ; j<c.size() ; j++){
+            if ((i>>j)&1){
+                cnt++;
+                now_change[c[j]-'a']=1;
+            }
+        }
+        if (cnt>k) continue;
+
+        // check
+        string s="";
+        for (int i=0 ; i<n ; i++){
+            if (now_change[s1[i]-'a']){
+                s+=s2[i];
+            }else{
+                s+=s1[i];
+            }
+        }
+
+        int total=0, now=0;
+        for (int i=0 ; i<n; i++){
+            if (s[i]==s2[i]){
+                now++;
+            }else{
+                now=0;
+            }
+            total+=now;
+        }
+
+        ans=max(ans, total);
     }
 
     // output
@@ -80,6 +125,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

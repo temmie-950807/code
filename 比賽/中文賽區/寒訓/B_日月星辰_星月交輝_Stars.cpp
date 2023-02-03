@@ -44,35 +44,102 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
+const int MAX = 201;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+
+int n;
+int x, y;
+int arr[300][300];
+int ans=0, now;
+
+void check(int val1, int val2){
+    if (val1){
+        if (val2){
+            now++;
+            ans=max(ans, now+1);
+        }
+    }else now=0;
+}
 
 void solve(){
     // input
     cin >> n;
     for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
+        cin >> x >> y;
+        // 把所有座標都變成正的 [1, MAX]
+        arr[x+101][y+101]=1;
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+
+    // horizon
+    for (int i=1 ; i<=MAX ; i++){
+        now=0;
+        for (int j=1 ; j<=MAX ; j++){
+            check(arr[i][j], arr[i][j-1]);
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    // vertical
+    for (int i=1 ; i<=MAX ; i++){
+        now=0;
+        for (int j=1 ; j<=MAX ; j++){
+            check(arr[j][i], arr[j-1][i]);
+        }
+    }
+
+    // top right
+    now=0;
+    for (int i=1 ; i<=MAX ; i++){
+        check(arr[i][i], arr[i-1][i-1]);
+    }
+    for (int i=1 ; i<=MAX ; i++){
+        now=0;
+        for (int j=1 ; i+j<=MAX && j<=MAX ; j++){
+            // cout << "x: " << i+j << " y: " << j << endl;
+            check(arr[i+j][j], arr[i+j-1][j-1]);
+        }
+    }
+    for (int i=1 ; i<=MAX ; i++){
+        now=0;
+        for (int j=1 ; j<=MAX && i+j<=MAX ; j++){
+            // cout << "x: " << j << " y: " << i+j << endl;
+            check(arr[j][i+j], arr[j-1][i+j-1]);
+        }
+    }
+
+    // bottom right
+    now=0;
+    for (int i=1 ; i<=MAX && MAX+1-i>=1 ; i++){
+        // cout << "x: " << i << " y: " << MAX+1-i << endl;
+        check(arr[i][MAX+1-i], arr[i-1][MAX+1-i+1]);
+    }
+    for (int i=1 ; i<=MAX ; i++){
+        now=0;
+        for (int j=1 ; i+j<=MAX && MAX+1-j>=1 ; j++){
+            // cout << "A | x: " << i+j << " y: " << MAX+1-j << endl;
+            // cout << "B | x: " << i+j-1 << " y: " << MAX+1-j+1 << endl;
+            check(arr[i+j][MAX+1-j], arr[i+j-1][MAX+1-j+1]);
+        }
+    }
+    for (int i=1 ; i<=MAX ; i++){
+        now=0;
+        for (int j=1 ; j<=MAX && MAX+1-i-j>=1 ; j++){
+            // cout << "A | x: " << j << " y: " << MAX+1-i-j << endl;
+            // cout << "B | x: " << j-1 << " y: " << MAX+1-i-j+1 << endl;
+            check(arr[j][MAX+1-i-j], arr[j-1][MAX+1-i-j+1]);
+        }
     }
 
     // output
-    cout << ans << endl;
+    // cout << ans << endl;
+    if (ans>1){
+        cout << ans << endl;
+    }else{
+        cout << 0 << endl;
+    }
     return;
 }
 

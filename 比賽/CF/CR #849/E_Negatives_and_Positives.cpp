@@ -44,35 +44,38 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
+int n, tmp, cnt, total;
 vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
 
 void solve(){
+    // init
+    cnt=0;
+    total=0;
+    v.clear();
+
     // input
     cin >> n;
     for (int i=0 ; i<n ; i++){
         cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+        if (tmp<0){
+            cnt++;
         }
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+        total+=abs(tmp);
+        v.push_back(abs(tmp));
     }
 
-    // output
-    cout << ans << endl;
+    // process
+    if (cnt&1){
+        // cout << "min: " << (*min_element(v.begin(), v.end())) << endl;
+        cout << total-2*(*min_element(v.begin(), v.end())) << endl;
+    }else{
+        cout << total << endl;
+    }
     return;
 }
 
@@ -80,6 +83,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

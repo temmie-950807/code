@@ -44,35 +44,35 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, tmp;
+vector<int> v(2);
+int dp[2][2][MAX_SIZE]; // <有沒有拿過前一個, 有沒有拿過, 前 i 個最大的答案>
 
 void solve(){
     // input
     cin >> n;
-    for (int i=0 ; i<n ; i++){
+    for (int i=2 ; i<=n+1 ; i++){
         cin >> tmp;
         v.push_back(tmp);
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
-        }
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    // DP
+    for (int i=2 ; i<=n+1 ; i++){
+        dp[0][0][i]=max(dp[0][0][i-1], dp[1][0][i-1]);
+        dp[0][1][i]=dp[0][0][i-1]+v[i];
+        dp[1][0][i]=max(dp[0][1][i-1], dp[1][1][i-1]);;
+        dp[1][1][i]=dp[0][1][i-1]+v[i];
     }
 
     // output
-    cout << ans << endl;
+    // cout << dp[1][1][n+1] << endl;
+    cout << max({dp[0][0][n+1], dp[0][1][n+1], dp[1][0][n+1], dp[1][1][n+1]}) << endl;
+
     return;
 }
 

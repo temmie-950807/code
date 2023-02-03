@@ -44,35 +44,53 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int ans=0;
+string s;
+stack<char> sta;
 
 void solve(){
+    // init
+    ans=0;
+    while (sta.size()) sta.pop();
+    
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+    cin >> s;
+    
+    // process
+    for (int i=0 ; i<s.size() ; i++){
+        if (s[i]=='(' | s[i]=='{'){
+            sta.push(s[i]);
+
+        }else if (s[i]==')'){
+            if (sta.empty()){
+                ans++;
+            }else if (sta.top()=='{'){
+                ans++;
+            }else{
+                sta.pop();
+            }
+        }else if (s[i]=='}'){
+            if (sta.empty()){
+                ans++;
+            }else if (sta.top()=='('){
+                ans++;
+            }else{
+                sta.pop();
+            }
         }
+
+        // debug(sta);
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
-    }
+    ans+=sta.size();
 
     // output
     cout << ans << endl;
+
     return;
 }
 
@@ -80,6 +98,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

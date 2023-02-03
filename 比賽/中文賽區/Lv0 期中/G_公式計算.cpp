@@ -3,7 +3,6 @@
 #include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-#pragma comment(linker, "/STACK:1024000000,1024000000")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
 #if !LOCAL
@@ -12,6 +11,20 @@
 using namespace std;
 using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 
 // debugger
 // ===================================
@@ -36,8 +49,19 @@ const int INF = 1e18;
 const int MOD = 998244353;
 const double EPS = 1e-6;
 
-int n, tmp, s=0;
-vector<int> v(1);
+int n, pow_2, total, tmp;
+vector<int> v, k;
+
+// function
+int qp(int b, int p){
+    int ret=1;
+    while (p){
+        if (p&1) ret=ret*b%MOD;
+        b=b*b%MOD;
+        p>>=1;
+    }
+    return ret;
+}
 
 void solve(){
     // input
@@ -46,19 +70,18 @@ void solve(){
         cin >> tmp;
         v.push_back(tmp);
     }
-    partial_sum(v.begin(), v.end(), v.begin());
 
-    // count
-    for (int i=1 ; i<=n ; i++){
-        for (int j=1 ; j<=i ; j++){
-            cout << "add: " << 
-            s+=(v[i]-v[j-1])*(v[i]-v[j-1]);
-            s%=MOD;
-        }
+    k.resize(n, 0);
+    partial_sum(v.begin(), v.end(), k.begin());
+
+    // get s
+    for (int i=0 ; i<n ; i++){
+        total+=v[i]*k[i];
+        total%=MOD;
     }
 
     // output
-    cout << s << endl;
+    cout << total*qp(2, n-1)%MOD << endl;
     return;
 }
 

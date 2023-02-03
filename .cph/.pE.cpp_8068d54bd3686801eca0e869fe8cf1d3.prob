@@ -1,1 +1,0 @@
-{"name":"Local: pE","url":"/home/temmie/Documents/GitHub/personal/code/pE.cpp","tests":[{"id":1672919441604,"input":"3 3\n2 2 5 3 9\n2 3 3 1 9\n2 1 9 2 6\n1 3\n3 1\n2 2","output":"25\n30\n20"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/temmie/Documents/GitHub/personal/code/pE.cpp","group":"local","local":true}

@@ -44,35 +44,39 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+string a, b, c;
 
 void solve(){
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
-        }
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
-    }
+    cin >> a >> b >> c;
 
-    // output
-    cout << ans << endl;
+    // process
+    for (int i=0 ; i<a.size() ; i++){
+        bool aa=a[i]-'0', bb=b[i]-'0';
+        // cout << endl << aa << " " << bb << endl;
+
+        if (c[i]=='&'){
+            // cout << "PASS" << endl;
+            if (aa==1 && bb==1){
+                cout << "1";
+            }else if (aa==0 && bb==1){
+                cout << "X";
+            }else{
+                cout << "0";
+            }
+        }else if (c[i]=='^'){
+            if (bb==1){
+                cout << (!aa);
+            }else{
+                cout << aa;
+            }
+        }
+    }    
     return;
 }
 

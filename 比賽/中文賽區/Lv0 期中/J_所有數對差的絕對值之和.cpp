@@ -3,7 +3,6 @@
 #include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-#pragma comment(linker, "/STACK:1024000000,1024000000")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
 #if !LOCAL
@@ -12,6 +11,20 @@
 using namespace std;
 using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 
 // debugger
 // ===================================
@@ -33,11 +46,11 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // declare
 const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
-const int MOD = 998244353;
+const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, s=0;
-vector<int> v;
+int n, tmp, ans=0;
+vector<int> v, k;
 
 void solve(){
     // input
@@ -48,16 +61,29 @@ void solve(){
     }
     sort(v.begin(), v.end());
 
-    debug(v);
+    // pre-process
+    k.resize(v.size()+1);
+    partial_sum(v.begin(), v.end(), k.begin()+1);
 
-    // count
-    for (int i=1 ; i<=n ; i++){
-        for (int j=1 ; j<=i ; j++){
+    // get answer
+    for (int i=0 ; i<n ; i++){
+        if (v[i]<0){
+            int idx=lower_bound(v.begin(), v.end(), -v[i])-v.begin(); // 到idx（包含）就用正常加法
+            
+            // normal
+            ans+=(n-idx)*v[i] + k[n]-k[idx];
+
+            // reverse
+            ans+= - (idx-i-1)*v[i] - (k[idx]-k[i+1]);
+
+
+        }else{
+            ans+=(n-i-1)*v[i] + k[n]-k[i+1];
         }
     }
 
     // output
-    cout << s << endl;
+    cout << ans << endl;
     return;
 }
 

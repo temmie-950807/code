@@ -44,35 +44,52 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e6+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, q, tmp;
+char cmd;
+vector<int> dsu(MAX_SIZE);
+
+// function
+int _find(int x){
+    if (dsu[x]!=x){
+        return dsu[x]=_find(dsu[x]);
+    }else{
+        return dsu[x];
+    }
+}
+void _union(int x, int y){
+    x=_find(dsu[x]);
+    y=_find(dsu[y]);
+
+    if (x!=y){
+        dsu[x]=y;
+    }
+}
 
 void solve(){
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
-        }
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+    cin >> n >> q;
+
+    // init
+    for (int i=1 ; i<=n+1 ; i++){
+        dsu[i]=i;
     }
 
-    // output
-    cout << ans << endl;
+    // queries
+    for (int i=0 ; i<q ; i++){
+        cin >> cmd >> tmp;
+
+        if (cmd=='-'){
+            _union(tmp, tmp+1);
+        }else{
+            int ans=_find(tmp);
+            cout << (ans==n+1 ? -1 : ans) << endl;
+        }
+    }
     return;
 }
 

@@ -44,35 +44,71 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 2e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, q, tmp;
+int cmd, x, y;
+vector<int> v, BIT(MAX_SIZE);
+
+void update(int pos, int val){
+    for (int i=pos ; i<BIT.size() ; i+=i&-i){
+        BIT[i]+=val;
+    }
+}
+
+int query(int pos){
+    int ret=0;
+    for (int i=pos ; i>0 ; i-=i&-i){
+        ret+=BIT[i];
+    }
+    return ret;
+}
+
+int get(int val){
+    int total=0;
+    while (val){
+        total+=val%10;
+        val/=10;
+    }
+    return total;
+}
 
 void solve(){
+    // init
+    v.clear();
+    v.resize(1, 0);
+
     // input
-    cin >> n;
+    cin >> n >> q;
+    BIT.clear();
+    BIT.resize(2*n, 0);
     for (int i=0 ; i<n ; i++){
         cin >> tmp;
         v.push_back(tmp);
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+
+    // queries
+    for (int i=0 ; i<q ; i++){
+        cin >> cmd;
+
+        if (cmd==1){
+            cin >> x >> y;
+            update(x, 1);
+            update(y+1, -1);
+
+        }else{
+            cin >> x;
+            int cnt=query(x), now=v[x];
+            for (int i=0 ; i<cnt ; i++){
+                now=get(now);
+                if (now<10) break;
+            }
+            cout << now << endl;
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
-    }
-
-    // output
-    cout << ans << endl;
     return;
 }
 
@@ -80,6 +116,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

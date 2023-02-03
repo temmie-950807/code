@@ -3,7 +3,6 @@
 #include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-#pragma comment(linker, "/STACK:1024000000,1024000000")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
 #if !LOCAL
@@ -12,6 +11,20 @@
 using namespace std;
 using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 
 // debugger
 // ===================================
@@ -36,62 +49,25 @@ const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, a, b, c, d, e, f;
-int g, h;
-int ans_x=-INF, ans_y=-INF;
-vector<int> v;
+int a, b, c, d, e, f;
 
-void debug(){
-    cout << a << "x+" << b << "y=" << c << endl;
-    cout << d << "x+" << e << "y=" << f << endl << endl;
-}
-
-void solve1(){
+void solve(){
     // input
     cin >> a >> b >> c >> d >> e >> f;
+    int delta   = a*e-b*d;
+    int delta_x = c*e-b*f;
+    int delta_y = a*f-c*d;
 
-    // get same a-e or b-d
-    if (a==0 && b!=0 && d!=0 && e==0){
-        // 0x+by=c
-        // dx+0y=f
-        ans_x=f/d;
-        ans_y=c/b;
-        cout << ans_x << " " << ans_y << endl;
-        return;
-    }
-    if (a!=0 && b==0 && d==0 && e!=0){
-        // ax+0y=c
-        // 0x+ey=f
-        ans_x=c/a;
-        ans_y=f/e;
-        cout << ans_x << " " << ans_y << endl;
-        return;
-    }
-    // get same a-d or b-e
-    if (a!=0 && d!=0){
-        g=a;
-        h=d;
-
-        a*=h;
-        b*=h;
-        c*=h;
-
-        d*=g;
-        e*=g;
-        f*=g;
-        debug();
-    }else if (b!=0 && e!=0){
-        g=b;
-        h=e;
-
-        a*=h;
-        b*=h;
-        c*=h;
-
-        d*=g;
-        e*=g;
-        f*=g;
-        debug();
+    if (delta==0 && delta_x==0 && delta_y==0){
+        cout << "inf" << endl;
+    }else if (delta==0 && (delta_x!=0 || delta_y!=0)){
+        cout << "no" << endl;
+    }else{
+        if (delta_x%delta==0 && delta_y%delta==0){
+            cout << delta_x/delta << " " << delta_y/delta << endl;
+        }else{
+            cout << "no" << endl;
+        }
     }
     return;
 }
@@ -102,7 +78,7 @@ signed main(void){
     int t=1;
     cin >> t;
     while (t--){
-        solve1();
+        solve();
     }
     return 0;
 }

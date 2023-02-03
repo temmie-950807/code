@@ -44,35 +44,45 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, breaker;
 
-void solve(){
+void solve1(){
+    // init
+    breaker=0;
+
     // input
     cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+    int h=__lg(n)+1;
+
+    bitset<40> now=n*2+1;
+
+    bool flag=0;
+    for (int i=h ; i>=1 ; i--){
+        if (now[i] && now[i-1]){
+            cout << -1 << endl;
+            return;
+        }else{
+            flag=0;
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    bitset<40> a, b, target=n;
+    for (int i=0 ; i<=h ; i++){
+        if (target[i]){
+            a[i]=1;
+            a[i-1]=1;
+            b[i-1]=1;
+        }
     }
 
     // output
-    cout << ans << endl;
+    cout << a.to_ulong() << " " << b.to_ulong() << endl;
+
     return;
 }
 
@@ -80,8 +90,10 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
-        solve();
+        solve1();
+        // cout << endl;
     }
     return 0;
 }

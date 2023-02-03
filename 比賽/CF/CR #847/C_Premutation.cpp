@@ -44,35 +44,61 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, tmp;
+vector<int> G[105];
+vector<int> ans;
+vector<int> cnt(105, 0);
 
 void solve(){
+    // init
+    for (int i=0 ; i<105 ; i++){
+        G[i].clear();
+    }
+    ans.clear();
+    fill(cnt.begin(), cnt.end(), 0);
+
     // input
     cin >> n;
     for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+        for (int j=0 ; j<n-1 ; j++){
+            cin >> tmp;
+            G[i].push_back(tmp);
         }
     }
+
+    // process
     for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+        for (int j=0 ; j<n ; j++){
+            if (G[j].size()){
+                cnt[G[j].back()]++;
+            }
+        }
+
+        for (int j=1 ; j<=n ; j++){
+            if (cnt[j]==n-1){
+                cnt[j]=0;
+                for (int k=0 ; k<n ; k++){
+                    if (G[k].back()==j){
+                        G[k].pop_back();
+                    }
+                }
+                ans.push_back(j);
+            }else{
+                cnt[j]=0;
+            }
+        }
     }
 
     // output
-    cout << ans << endl;
+    reverse(ans.begin(), ans.end());
+    for (auto x : ans){
+        cout << x << " ";
+    }   cout << endl;
     return;
 }
 
@@ -80,6 +106,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

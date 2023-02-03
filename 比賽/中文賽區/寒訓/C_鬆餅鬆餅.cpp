@@ -44,35 +44,44 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+string s, name, _hash;
+int id;
+
+stack<string> cake[1050];
+queue<string> cus;
 
 void solve(){
-    // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+    while (cin >> s && s!="close"){
+        if (s=="pancake"){
+            cin >> id >> _hash;
+            cake[id].push(_hash);
+
+        }else if (s=="customer"){
+            cin >> name;
+            cus.push(name);
+
+        }else if (s=="sell"){
+            cin >> id;
+            if (cus.empty()){
+                cout << "no customer" << endl;
+            
+            }else if (cake[id].empty()){
+                cout << "sold out" << endl;
+
+            }else if (!cus.empty() && !cake[id].empty()){
+                cout << cake[id].top() << " " << cus.front() << endl;
+                cake[id].pop();
+                cus.pop();
+            
+            }
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
-    }
-
-    // output
-    cout << ans << endl;
+    
     return;
 }
 

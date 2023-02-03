@@ -44,35 +44,46 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e6+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, k;
+int a, b;
+int ans=0;
+gp_hash_table<int, int, custom_hash> ma, total, cnt;
+vector<pair<int, int>> v;
 
 void solve(){
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
+    cin >> n >> k;
+    v.push_back({0, 0});
+    for (int i=1 ; i<=n ; i++){
+        cin >> a >> b;
+        v.push_back({a, b});
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+    v.push_back({INF, INF});
+
+    // process
+    for (int i=1 ; i<=n ; i++){
+        if (v[i+1].first==v[i].first && v[i+1].second>k && v[i].first>k){
+            // 有相鄰，且都大於k
+            ans+=v[i].second;
+            cnt[v[i].first]++;
+        }else if (v[i+1].first==v[i].first && v[i+1].second<=k && v[i].first>k){
+            // 有相鄰，且不大於k
+            ans+=v[i].second;
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    for (auto x : cnt){
+        ans-=k*(x.second-1);
     }
 
     // output
     cout << ans << endl;
+
     return;
 }
 

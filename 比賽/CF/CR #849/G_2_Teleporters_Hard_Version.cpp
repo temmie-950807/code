@@ -44,31 +44,76 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
+int n, c, tmp;
 vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+vector<pair<int, int>> cost1, cost2;
+bitset<MAX_SIZE> use;
 
 void solve(){
+    // init
+    use=0;
+    v.clear();
+    cost1.clear();
+    cost2.clear();
+
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
+    cin >> n >> c;
+    for (int i=1 ; i<=n ; i++){
         cin >> tmp;
         v.push_back(tmp);
+        cost1.push_back({i+tmp, i});
+        cost2.push_back({n-i+tmp+1, i});
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+
+    // process
+    sort(cost1.begin(), cost1.end());
+
+    for (auto x : cost1){
+        cout << x.first << " " << x.second << endl;
+    }
+    cout << endl;
+    for (auto x : cost2){
+        cout << x.first << " " << x.second << endl;
+    }
+
+    int total=0, ans=0;
+    if (c>cost1[0].first){
+        total+=cost1[0].first;
+        cout << "idx: " << cost1[0].second << " add: " << cost1[0].first << endl;
+        ans++;
+        use[cost1[0].second]=1;
+
+        for (auto x : cost2){
+            cost1.push_back(x);
         }
+        sort(cost1.begin(), cost1.end());
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    for (int i=1 ; i<=n ; i++){
+        cout << use[i];
+    }   cout << endl;
+    for (auto x : cost1){
+        cout << x.first << " " << x.second << endl;
+    }
+
+    for (int i=0 ; i<cost1.size() ; i++){
+        if (use[cost1[i].second]==0){
+            total+=cost1[i].first;
+            cout << "idx: " << cost1[0].second << " add: " << cost1[0].first << endl;
+            ans++;
+            use[cost1[i].second]=1;
+            
+            if (total>c){
+                total-=cost1[i].first;
+                ans--;
+                break;
+            }
+        }
     }
 
     // output
@@ -80,6 +125,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

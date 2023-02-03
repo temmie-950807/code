@@ -44,35 +44,52 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e5+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, m, d, tmp;
+vector<int> p, v, pos(MAX_SIZE);
+int ans=INF;
 
 void solve(){
+    // init
+    ans=INF;
+    p.clear();
+    v.clear();
+    fill(pos.begin(), pos.begin()+n+1, 0);
+
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
+    cin >> n >> m >> d;
+    for (int i=1 ; i<=n ; i++){
+        cin >> tmp;
+        pos[tmp]=i;
+        p.push_back(tmp);
+    }
+    for (int i=0 ; i<m ; i++){
         cin >> tmp;
         v.push_back(tmp);
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+
+    // process
+    int l=0, r=d-1;
+    for (int i=0 ; i<m-1 ; i++){
+        if (pos[v[i]]>pos[v[i+1]] || pos[v[i+1]]-pos[v[i]]>d){
+            ans=0;
+            break;
+        }else{
+            ans=min(ans, pos[v[i+1]]-pos[v[i]]);
+
+            if (d+2<=n){
+                ans=min(ans, d+1-(pos[v[i+1]]-pos[v[i]]));
+            }
         }
-    }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
     }
 
     // output
     cout << ans << endl;
+    // cout << max(0LL, ans) << endl;
     return;
 }
 
@@ -80,6 +97,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve();
     }

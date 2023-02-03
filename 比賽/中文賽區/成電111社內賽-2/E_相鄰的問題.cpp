@@ -44,35 +44,77 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_SIZE = (1<<20)+5;
+const int MAX_SIZE = 1e6+5;
 const int INF = 1e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp, ans=0;
-vector<int> v;
-gp_hash_table<int, int, custom_hash> cnt;
+int n, m;
+int a, b;
+vector<int> G[MAX_SIZE], one, two;
+bitset<MAX_SIZE> vis;
 
 void solve(){
+    // init
+    one.clear();
+    two.clear();
+    vis=0;
+
     // input
-    cin >> n;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        v.push_back(tmp);
+    cin >> n >> m;
+    for (int i=0 ; i<m ; i++){
+        cin >> a >> b;
+        G[a].push_back(b);
+        G[b].push_back(a);
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        for (auto x : v){
-            cnt[x^tmp]++;
+
+    // check
+    for (int i=1 ; i<=n ; i++){
+        if (G[i].size()==0){
+            vis[i]=1;
+        }else if (G[i].size()==1){
+            one.push_back(i);
+        }else if (G[i].size()==2){
+            two.push_back(i);
+        }else{
+            cout << "No" << endl;
+            return;
         }
     }
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        ans+=cnt[tmp];
+
+    // process
+    for (int i=0 ; i<one.size() ; i++){
+        if (vis[one[i]]==0){
+            int now=one[i];
+            bool flag=0;
+
+            vis[now]=1;
+
+            while (flag==0){
+                flag=1;
+
+                for (int j=0 ; j<G[now].size() ; j++){
+                    if (vis[G[now][j]]==0){
+                        flag=0;
+                        now=G[now][j];
+                        vis[now]=1;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // get answer
+    int ans=1;
+    for (int i=1 ; i<=n ; i++){
+        ans&=vis[i];
     }
 
     // output
-    cout << ans << endl;
+    if (ans) cout << "Yes" << endl;
+    else cout << "No" << endl;
+
     return;
 }
 
