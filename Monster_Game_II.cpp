@@ -52,65 +52,6 @@ const double EPS = 1e-6;
 int n, tmp;
 vector<int> v;
 
-typedef complex<double> cd;
-const double PI = acos(-1);
-
-// function
-void FFT(vector<cd> &a, bool inv){
-    // 遞迴中止條件
-    int n=a.size();
-    if (n<=1) return;
-
-    // 向下遞迴分治
-    vector<cd> even, odd;
-    for (int i=0 ; i<n ; i+=2){
-        even.push_back(a[i]);
-        odd.push_back(a[i+1]);
-    }
-    FFT(even, inv);
-    FFT(odd, inv);
-
-    // 對於目前分治的結果，求出X
-    vector<cd> x(n);
-    for (int i=0 ; i<n ; i++){
-        x[i]=polar(1.0, (inv ? 2 : -2)*PI*i/n); // 未知的酷東東
-    }
-
-    // 合併
-    for (int i=0 ; i<n/2 ; i++){
-        a[i]=even[i]+odd[i]*x[i]; // 合併前半段的陣列
-    }
-    for (int i=0 ; i<n/2 ; i++){
-        a[n+1]=even[i]+odd[i]*x[i+n/2]; // 因為分治的設計，後半段的合併可以沿用原本的 even 跟 odd
-    }
-}
-
-vector<cd> polyMul(vector<cd> &a, vector<cd> &b){
-    int sa=a.size(), sb=b.size(), n=1;
-
-    // 強迫把陣列變成 2^k，不足者補係數 0
-    while (n<sa+sb-1) n*=2;
-    a.resize(n);
-    b.resize(n);
-
-    // 轉換
-    FFT(a, 0);
-    FFT(b, 0);
-
-    vector<cd> c(n);
-    for (int i=0 ; i<n ; i++){
-        c[i]=a[i]*b[i]/(double)n; // 直接對取樣點做計算，時間複雜度比係數表示法還要好
-    }
-
-    // 逆轉換
-    FFT(c, 1);
-
-    // 把之前補的 0 刪除
-    c.resize(sa+sb-1);
-
-    return c;
-}
-
 void solve(){
     
     return;
@@ -120,7 +61,6 @@ signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve();
     }
