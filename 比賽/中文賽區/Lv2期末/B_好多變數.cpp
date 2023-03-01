@@ -51,7 +51,7 @@ const double EPS = 1e-6;
 
 int n, q;
 int op, i, j, v, d;
-vector<set<pair<int, int>>> G(MAX_SIZE);
+vector<set<pair<int, int>>> inv_G(MAX_SIZE);
 vector<int> val(MAX_SIZE, MOD);
 bitset<MAX_SIZE> vis;
 
@@ -60,7 +60,7 @@ void dfs(int now){
     vector<pair<int, int>> rov;
     vis[now]=1;
 
-    for (auto x : G[now]){
+    for (auto x : inv_G[now]){
         if (vis[x.first]==1){
             continue;
         }
@@ -77,8 +77,8 @@ void dfs(int now){
 
     // remove
     for (auto x : rov){
-        G[now].erase(x);
-        G[x.first].erase({now, -x.second});
+        inv_G[now].erase(x);
+        inv_G[x.first].erase({now, -x.second});
     }
 }
 
@@ -90,7 +90,7 @@ void dis(int now, int f, int s){
         return;
     }
 
-    for (auto x : G[now]){
+    for (auto x : inv_G[now]){
         if (vis[x.first]==1) continue;
         dis(x.first, f, s+x.second);
     }
@@ -131,8 +131,8 @@ void solve(){
                 dfs(i);
 
             }else{
-                auto it1=G[i].lower_bound({j, -INF});
-                auto it2=G[j].lower_bound({i, -INF});
+                auto it1=inv_G[i].lower_bound({j, -INF});
+                auto it2=inv_G[j].lower_bound({i, -INF});
 
                 if ((*it1).first==j && (*it1).second!=v){
                     // 兩個數字都沒有，且是不合法的
@@ -150,8 +150,8 @@ void solve(){
                     if (d==v || vis[j]==0){
                         // 合法
                         cout << v << endl;
-                        G[i].insert({j, v});
-                        G[j].insert({i, -v});
+                        inv_G[i].insert({j, v});
+                        inv_G[j].insert({i, -v});
 
                     }else{
                         // 不合法

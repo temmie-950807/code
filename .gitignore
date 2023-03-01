@@ -1,0 +1,4 @@
+.cph/
+.vscode/
+testlib.h
+gen.cpp
