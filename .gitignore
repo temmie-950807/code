@@ -2,3 +2,7 @@
 .vscode/
 testlib.h
 gen.cpp
+*.bin
+*.in
+*.out
+testlib.h
