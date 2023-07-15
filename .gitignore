@@ -1,5 +1,6 @@
 .cph/
 .vscode/
+template.cpp
 gen.cpp
 *.bin
 *.in
