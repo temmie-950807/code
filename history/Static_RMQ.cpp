@@ -4,9 +4,6 @@
 #pragma GCC optimize("O3,unroll-loops")
 #define fastio ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 #define int long long
-#if !LOCAL
-#define endl "\n"
-#endif
 using namespace std;
 using namespace __gnu_pbds;
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> order_set;
@@ -18,16 +15,16 @@ struct custom_hash {
         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
         return x ^ (x >> 31);
     }
- 
+
     size_t operator()(uint64_t x) const {
         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
         return splitmix64(x + FIXED_RANDOM);
     }
 };
- 
+
 // debugger
 // ===================================
-bool debug_mode=0;
+bool debug_mode=true;
 #define cerr if(debug_mode) cerr
 #define dbg(x) cerr << #x << " = " << x << endl
 template<typename T>void debug(const T &v,int h,int w,string sv=" "){for(int i=0;i<h;i++){cerr<<v[i][0];for(int j=1;j<w;j++)cerr<<sv<<v[i][j];cerr<<endl;}};
@@ -44,93 +41,60 @@ template<typename T>void debug(const multiset<T>&v){for(auto z:v)cerr<<z<<" ";ce
 template<typename T,typename V>void debug(const map<T,V>&v){for(auto z:v)cerr<<"["<<z.first<<"]="<<z.second<<", ";cerr<<endl;}
 template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a)cerr<<z<<" ";cerr<<endl;}
 // ===================================
- 
+
 // declare
-const int MAX_SIZE = 1e6+5;
-const int INF = 1e18;
+const int MAX_N = 2e5+5;
+const int INF = 9e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
- 
-int n, p, x;
-map<int, int> m;
- 
-int qp(int b, int p){
-    int ret=1;
- 
-    while (p){
-        if (p&1){
-            ret*=b;
-            ret%=MOD;
+
+int n, q, tmp;
+int a, b;
+vector<int> v;
+vector<vector<int>> ST;
+
+void build(vector<int> &v){
+    ST.push_back(v);
+    int h=__lg(v.size());
+
+    for (int i=1 ; i<=h ; i++){
+        int len=(1<<(i-1));
+        ST.push_back(vector<int>());
+
+        for (int j=0 ; j+len<ST[i-1].size() ; j++){
+            ST[i].push_back(min(ST[i-1][j], ST[i-1][j+len]));
         }
- 
-        b=b*b%MOD;
-        p>>=1;
     }
-    return ret;
 }
- 
+
+int query(int l, int r){
+    int h=__lg(r-l);
+    return min(ST[h][l], ST[h][r-(1<<h)]);
+}
+
 void solve1(){
- 
+
     // input
-    cin >> n;
+    cin >> n >> q;
     for (int i=0 ; i<n ; i++){
-        cin >> p >> x;
-        m[p]=x;
+        cin >> tmp;
+        v.push_back(tmp);
     }
- 
-    // output 1
-    int ans1=1;
-    for (auto x : m){
-        ans1*=x.second+1;
-        ans1%=MOD;
-    }
-    cout << ans1%MOD << " ";
- 
-    // output 2
-    int ans2=1;
-    for (auto x : m){
-        ans2*=qp(x.first, x.second+1)-1;
-        ans2%=MOD;
-        ans2*=qp(x.first-1, MOD-2);
-        ans2%=MOD;
-    }
-    cout << ans2%MOD << " ";
- 
-    // output 3
-    int ans3=1;
-    int total=0;
-    bool flag=0;
-    for (auto x : m){
-        ans3*=qp(x.first, x.second);
-        ans3%=MOD;
- 
-        if (x.second%2!=0){
-            flag=1;
-        }
+
+    build(v);
+
+    // queries
+    for (int i=0 ; i<q ; i++){
+        cin >> a >> b;
+        cout << query(a, b) << "\n";
     }
     
-    if (flag==0){
-        int get=1;
-        for (auto x : m){
-            get*=qp(x.first, x.second/2);
-            get%=MOD;
-            dbg(get);
-        }
-        
-        ans3=qp(ans3, (ans1*qp(2, MOD-2)%MOD));
-        ans3=qp(ans3, ans1/2);
-        ans3=get*ans3%MOD;
-    }else{
-        ans3=qp(ans3, ans1/2);
-    }
-    cout << ans3%MOD << " ";
- 
     return;
 }
- 
+
 signed main(void){
     fastio;
- 
+    
     int t=1;
     while (t--){
         solve1();
