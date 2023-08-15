@@ -43,66 +43,31 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 2e5+5;
-const int INF = 9e18;
+const int MAX_N = 5e5+5;
+const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, m, s, t;
-int a, b, c;
-typedef pair<int, int> pii;
-vector<vector<pii>> G(MAX_N); // from -> <weight, to>
-priority_queue<pii, vector<pii>, greater<pii>> pq; // {weight, from}
-vector<int> dis(MAX_N, 1e15); // INF 不可以開太大，不然會 overflow
-vector<int> from(MAX_N); // 紀錄是由誰轉移
+int n, a, b;
+int w=INF, x=-INF, y=INF, z=-INF;
+vector<pair<int, int>> v;
 
 void solve1(){
     
     // input
-    cin >> n >> m >> s >> t;
-    for (int i=0 ; i<m ; i++){
-        cin >> a >> b >> c;
-        G[a].push_back({c, b});
+    cin >> n;
+    for (int i=0 ; i<n ; i++){
+        cin >> a >> b;
+
+        w=min(w, a-b);
+        x=max(x, a-b);
+        y=min(y, a+b);
+        z=max(z, a+b);
     }
+
+    cout << max(x-w, z-y) << "\n";
 
     // process
-    pq.push({0, s});
-    dis[s]=0;
-    while (pq.size()){
-        auto [now_weight, now_node]=pq.top();
-        pq.pop();
-
-        if (now_weight!=dis[now_node]) continue;
-
-        for (auto [nxt_weight, nxt_node] : G[now_node]){
-            if (dis[now_node]+nxt_weight<dis[nxt_node]){
-                dis[nxt_node]=dis[now_node]+nxt_weight;
-                from[nxt_node]=now_node;
-                pq.push({dis[now_node]+nxt_weight, nxt_node});
-            }
-        }
-    }
-
-    if (dis[t]==1e15){
-        cout << -1 << "\n";
-        return;
-    }
-
-    // 回朔解
-    cout << dis[t] << " ";
-    vector<int> ans(1, t);
-    do{
-        t=from[t];
-        ans.push_back(t);
-    } while (t!=s);
-    reverse(ans.begin(), ans.end());
-
-    // output
-    cout << ans.size()-1 << "\n";
-    for (int i=0 ; i<ans.size()-1 ; i++){
-        cout << ans[i] << " " << ans[i+1] << "\n";
-    }
-
     return;
 }
 

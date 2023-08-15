@@ -48,41 +48,77 @@ const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, m;
-int a, b, c;
-vector<int> dis(MAX_N, INF);
-vector<tuple<int, int, int>> edge;
+struct trans{
+    int l, a, b, r;
 
-void solve1(){
-
-    // input
-    cin >> n >> m;
-    for (int i=0 ; i<m ; i++){
-        cin >> a >> b >> c;
-        edge.push_back({a, b, c});
-    }
-
-    // process
-    bool flag=0;
-    dis[1]=0;
-    for (int i=0 ; i<n ; i++){
-        for (auto [from, to, weight] : edge){
-            if (dis[from]!=INF && dis[from]+weight<dis[to]){
-                dis[to]=dis[from]+weight;
-                if (i==n-1){
-                    flag=1;
-                }
-            }
+    bool operator < (const trans B){
+        if (b==B.b){
+            return l<B.l;
+        }else{
+            return b>B.b;
         }
     }
 
-    if (flag){
-        cout << -1 << "\n";
-    }else{
-        cout << dis[n] << "\n";
+    void preview(){
+        cerr << "[" << l << " [" << a << ", " << b << "] " << r << "]\n";
+    }
+} tt;
+
+int n, l, a, b, r;
+vector<trans> v;
+
+int id=0;
+vector<pair<int, int>> ss;
+vector<int> far_point;
+
+/*
+預處理在每個區間最多可以到哪裡（用 set）
+*/
+
+void solve1(){
+
+    // init
+    v.clear();
+    ss.clear();
+    id=0;
+    far_point.clear();
+
+    // input
+    cin >> n;
+    for (int i=0 ; i<n ; i++){
+        cin >> tt.l >> tt.r >> tt.a >> tt.b;
+        v.push_back(tt);
     }
 
+    sort(v.begin(), v.end());
+    for (auto x : v){
+        x.preview();
+    }
+    cerr << "\n";
 
+    for (auto x : v){
+        auto it1=lower_bound(ss.begin(), ss.end(), make_pair(-x.r, -INF));
+        auto it2=lower_bound(ss.begin(), ss.end(), make_pair(-x.l, -INF));
+        dbg(it2-it1);
+
+        if (it2-it1>0){
+            // 找到有可能到的更遠的點
+            ss.push_back(make_pair(-x.l, (*prev(it2)).second));
+
+        }else{
+            // 不可能再到更遠的點
+            ss.push_back(make_pair(-x.r, id));
+            ss.push_back(make_pair(-x.l, id));
+            id++;
+            far_point.push_back(x.b);
+        }
+    }
+
+    cerr << "ss: \n";
+    for (auto x : ss){
+        cerr << x.first << " " << x.second << "\n";
+    }
+    cerr << "\n";
     
     return;
 }
@@ -91,6 +127,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve1();
     }

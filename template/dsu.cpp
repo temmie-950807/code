@@ -4,7 +4,7 @@ struct Disjoint_Set{
     void init(int n){ // 使用前，要傳入陣列大小初始化
         arr.resize(n+10);
         sz.resize(n+10);
-        for (int i=0 ; i<n ; i++){
+        for (int i=0 ; i<n+10 ; i++){
             arr[i]=i;
             sz[i]=1;
         }

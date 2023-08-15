@@ -24,7 +24,7 @@ struct custom_hash {
 
 // debugger
 // ===================================
-bool debug_mode=true;
+bool debug_mode=0;
 #define cerr if(debug_mode) cerr
 #define dbg(x) cerr << #x << " = " << x << endl
 template<typename T>void debug(const T &v,int h,int w,string sv=" "){for(int i=0;i<h;i++){cerr<<v[i][0];for(int j=1;j<w;j++)cerr<<sv<<v[i][j];cerr<<endl;}};
@@ -43,54 +43,80 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 2e5+5;
-const int INF = 5e18;
+const int MAX_N = 1e6+5;
+const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, m;
-int a, b, c;
-typedef pair<int, int> pii;
-vector<vector<pii>> G(MAX_N);
-vector<int> dis(MAX_N, INF);
-priority_queue<pii, vector<pii>, greater<pii>> pq;
+int n;
+vector<int> prime, lpf(MAX_N);
+vector<int> pow_prime;
+
+// function
+void prime_init(){
+    for (int i=2 ; i<MAX_N ; i++){
+        if (lpf[i]==0){
+            lpf[i]=i;
+            prime.push_back(i);
+        }
+
+        for (auto x : prime){
+            if (i*x>=MAX_N) break;
+            lpf[i*x]=x;
+            if (lpf[i]==x) break;
+        }
+    }
+}
 
 void solve1(){
 
-    // input
-    cin >> n >> m;
-    for (int i=0 ; i<m ; i++){
-        cin >> a >> b >> c;
-        G[a].push_back({c, b});
-    }
+    // input    
+    cin >> n;
 
     // process
-    dis[1]=0;
-    pq.push({0, 1});
-    while (pq.size()){
-        auto [now_weight, now_node]=pq.top();
-        pq.pop();
+    int ans=0;
+    for (int i=0 ; i<pow_prime.size() ; i++){
+        for (int j=i+2 ; j<pow_prime.size() ; j++){
+            if (pow_prime[i]*pow_prime[j]>n){
+                break;
+            }
 
-        if (dis[now_node]!=now_weight) continue;
+            int p=n/(pow_prime[i]*pow_prime[j]);
+            if (p>0){
+                cerr << pow_prime[i] << " " << pow_prime[j] << "\n";
+                dbg(p);
 
-        for (auto [nxt_weight, nxt_node] : G[now_node]){
-            if (dis[nxt_node]>nxt_weight+dis[now_node]){
-                dis[nxt_node]=nxt_weight+dis[now_node];
-                pq.push({nxt_weight+dis[now_node], nxt_node});
+                if (p>=prime[j]){
+                    ans+=(j-i-1);
+                    cerr << "add-1: " << j-i-1 << "\n";
+                }else if (p<=prime[i]){
+                    ans+=0;
+                    cerr << "add-2: 0\n";
+                }else{
+                    
+                    int R=upper_bound(prime.begin(), prime.end(), p)-prime.begin();
+                    ans+=(R-i-1);
+                    cerr << "add-3: " << R-i-1 << "\n";
+                }
+                cerr << "\n";
             }
         }
     }
 
     // output
-    for (int i=1 ; i<=n ; i++){
-        cout << dis[i] << " ";
-    }
+    cout << ans << "\n";
     return;
 }
 
 signed main(void){
     fastio;
-    
+
+    prime_init();
+    for (auto x : prime){
+        pow_prime.push_back(x*x);
+    }
+    dbg(pow_prime.size());
+
     int t=1;
     while (t--){
         solve1();

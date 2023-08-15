@@ -43,48 +43,65 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 500+5;
+const int MAX_N = 2e5+5;
 const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, m, q;
-int a, b, c;
-vector<vector<pair<int, int>>> G(MAX_N);
-vector<vector<int>> dis(MAX_N, vector<int>(MAX_N, INF));
+int n, m, k, tmp;
+vector<int> v(MAX_N);
+vector<bitset<50>> conv(50);
+vector<int> K(50);
+gp_hash_table<int, int, custom_hash> cnt;
 
 void solve1(){
 
     // input
-    cin >> n >> m >> q;
-    for (int i=0 ; i<m ; i++){
-        cin >> a >> b >> c;
-        dis[a][b]=min(dis[a][b], c);
-        dis[b][a]=min(dis[b][a], c);
+    cin >> n >> m >> k;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        tmp--;
+        v[i]=tmp;
     }
-    for (int i=1 ; i<=n ; i++){
-        dis[i][i]=0;
+    for (int i=0 ; i<m ; i++){
+        int a, b;
+        cin >> a >> b;
+        a--;
+        b--;
+        if (v[a]!=v[b]){
+            conv[v[a]][v[b]]=1;
+            conv[v[b]][v[a]]=1;
+        }
+    }
+    for (int i=0 ; i<k ; i++){
+        cin >> tmp;
+        K[i]=tmp;
     }
 
-    // build
-    for (int k=1 ; k<=n ; k++){
-        for (int i=1 ; i<=n ; i++){
-            for (int j=1 ; j<=n ; j++){
-                dis[i][j]=min(dis[i][j], dis[i][k]+dis[k][j]);
+    int ma=-INF;
+    for (int i=0 ; i<(1<<k) ; i++){
+        int total=0;
+
+        for (int j=0 ; j<k ; j++){
+            if ((i>>j)&1){
+                
+                for (int p=0 ; p<k ; p++){
+                    if (conv[j][p]==1 && (i>>p)&1){
+                        goto flag;
+                    }
+                }
+
+                total+=K[j];
             }
         }
+
+        ma=max(ma, total);
+        flag:;
     }
 
-    // qeuries
-    for (int i=0 ; i<q ; i++){
-        cin >> a >> b;
-        if (dis[a][b]>=INF){
-            cout << -1 << "\n";
-        }else{
-            cout << dis[a][b] << "\n";
-        }
-    }
+    cout << ma << "\n";
     
+
     return;
 }
 

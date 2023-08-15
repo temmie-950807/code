@@ -43,23 +43,214 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 2e5+5;
-const int INF = 9e18;
+const int MAX_N = 5e5+5;
+const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
-vector<int> v;
+int n, s, ma=-INF, mi=INF;
+int now_progress=1, start;
+vector<string> v(6, "000000"), ans;
+vector<int> k;
+int counter=0;
+
+pair<int, int> run(){
+    bitset<20000> vis;
+    int now_pos=10000;
+    int now_cmd=1;
+    int total=0;
+    int step=0;
+
+    while (now_cmd!=0 && step<100){
+        bool a, b;
+        int c;
+
+        // 覆寫功能
+        if (now_pos<0 || now_pos>=20'000){
+            break;
+        }
+
+        if (vis[now_pos]==0){
+            a=v[now_cmd][0]-'0';
+            b=v[now_cmd][1]-'0';
+            c=v[now_cmd][2]-'0';
+        }else{
+            a=v[now_cmd][3]-'0';
+            b=v[now_cmd][4]-'0';
+            c=v[now_cmd][5]-'0';
+        }
+
+        total-=vis[now_pos];
+        vis[now_pos]=a;
+        total+=vis[now_pos];
+
+        // 移動功能
+        if (b==0) now_pos--;
+        else now_pos++;
+
+        // 狀態轉移
+        now_cmd=c;
+
+        // 紀錄步數
+        step++;
+        counter++;
+    }
+
+    if (now_cmd!=0){
+        return {0, INF};
+    }else{
+        return {total, step};
+    }
+}
+
+void update_result(int i){
+    if (i==now_progress*(((1<<(4*n))-1)/10)){
+        system("clear");
+
+        for (int j=0 ; j<now_progress ; j++) cout << "#";
+        for (int j=0 ; j<10-now_progress ; j++) cout << "-";
+        cout << " ";
+        cout << now_progress << "0%\n";
+        cout << "\n";
+
+        cout << "max score: " << ma << " min step: " << (mi==INF ? -1 : mi) << " counter: " << counter << "\n";
+        cout << "time: " << 1.0*(clock()-start)/CLOCKS_PER_SEC << "\n";
+        
+        for (int i=1 ; i<=n ; i++){
+            cout << ans[i] << "\n";
+        }
+        cout << "\n";
+        cout.flush();
+        now_progress=min(now_progress+1, 10LL);
+    }
+}
+
+void preview(){
+    for (int i=1 ; i<=n ; i++){
+        cerr << v[i] << "\n";
+    }
+    cerr << "\n";
+}
+
+void solve1(){
+
+    // init
+    start=clock();
+
+    // input
+    cin >> n;
+
+    // enumerate
+    int SIX=1;
+    for (int i=0 ; i<2*n-1 ; i++) SIX*=n;
+
+    for (int i=0 ; i<(1<<(4*n)) ; i++){
+
+        for (int ii=1 ; ii<=n ; ii++){
+            v[ii][0]=((i>>(0+(ii-1)*4))&1)+'0';
+            v[ii][1]=((i>>(1+(ii-1)*4))&1)+'0';
+            v[ii][3]=((i>>(2+(ii-1)*4))&1)+'0';
+            v[ii][4]=((i>>(3+(ii-1)*4))&1)+'0';
+        }
+
+        for (int j=0 ; j<SIX ; j++){
+
+            int now=j;
+            for (int jj=1 ; jj<=n ; jj++){
+                if (jj!=n){
+                    v[jj][2]=(char)(now%n+1+'0');
+                    now/=n;
+                }else{
+                    v[jj][2]='0';
+                }
+
+                v[jj][5]=(char)(now%n+1+'0');
+                now/=n;
+            }
+
+            pair<int, int> res=run();
+            if (res.first>ma){
+                ma=res.first;
+                mi=res.second;
+                ans=v;
+            }else if (res.first==ma && res.second<mi){
+                mi=res.second;
+                ans=v;
+            }
+        }
+
+        for (int j=0 ; j<SIX ; j++){
+
+            int now=j;
+            for (int jj=1 ; jj<=n ; jj++){
+                v[jj][2]=(char)(now%n+1+'0');
+                now/=n;
+
+                if (jj!=n){
+                    v[jj][5]=(char)(now%n+1+'0');
+                    now/=n;
+                }else{
+                    v[jj][5]='0';
+                }
+            }
+
+            pair<int, int> res=run();
+            if (res.first>ma){
+                ma=res.first;
+                mi=res.second;
+                ans=v;
+            }else if (res.first==ma && res.second<mi){
+                mi=res.second;
+                ans=v;
+            }
+        }
+
+        update_result(i);
+    }
+
+    // output
+    cout << "max score: " << ma << " min step: " << (mi==INF ? -1 : mi) << " counter: " << counter << "\n";
+    for (int i=1 ; i<=n ; i++){
+        cout << ans[i] << "\n";
+    }
+    return;
+}
+
+void solve2(){
+    
+    // input
+    cin >> n;
+
+    // output
+    if (n==1){
+        cout << "100001\n";
+    }else if (n==2){
+        cout << "112102\n";
+        cout << "101100\n";
+    }else if (n==3){
+        cout << "112103\n";
+        cout << "113100\n";
+        cout << "101002\n";
+    }else if (n==4){
+        cout << "103004\n";
+        cout << "112013\n";
+        cout << "111101\n";
+        cout << "100102\n";
+    }else if (n==5){
+        cout << "103004\n";
+        cout << "112013\n";
+        cout << "111101\n";
+        cout << "100102\n";
+        cout << "000000\n";
+    }
+}
 
 signed main(void){
     fastio;
     
     int t=1;
-    cin >> n;
-    srand(time(NULL));
-    for (int i=0 ; i<3 ; i++){}
-    for (int i=1 ; i<=n ; i++){
-        cout << (bool)(rand()%3) << 1 << (i+1)%(n+1) << rand()%2 << rand()%2 << rand()%2 << "\n";
+    while (t--){
+        solve1();
     }
     return 0;
 }

@@ -43,64 +43,52 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 2e5+5;
-const int INF = 9e18;
+const int MAX_N = 5e5+5;
+const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q;
-int cmd, a, b;
-vector<int> v;
-
-struct Disjoint_Set{
-    vector<int> arr, sz;
-
-    void init(int n){ // 使用前，要傳入陣列大小初始化
-        arr.resize(n+10);
-        sz.resize(n+10);
-        for (int i=0 ; i<n ; i++){
-            arr[i]=i;
-            sz[i]=1;
-        }
-    }
-
-    int find(int a){ // 回傳 a 節點的 leader
-        if (arr[a]==a) return a;
-        else return arr[a]=find(arr[a]); // 路徑壓縮優化
-    }
-
-    void unite(int a, int b){ // 將兩個節點合併
-        a=find(a);
-        b=find(b);
-
-        if (a!=b){
-            if (sz[a]<sz[b]) swap(a, b); // 啟發式合併優化
-            arr[b]=a;
-            sz[a]+=sz[b];
-        }
-    }
-} dsu;
+int n, tmp;
+vector<int> a, b, c;
 
 void solve1(){
-    
+
+    // init
+    a.clear();
+    b.clear();
+    c.clear();
+
     // input
-    cin >> n >> q;
+    cin >> n;
+    for (int i=0 ; i<n ; i++){
+        cin >> tmp;
+        a.push_back(tmp);
+    }
+    sort(a.begin(), a.end());
 
-    // queries
-    dsu.init(n);
-    for (int i=0 ; i<q ; i++){
-        cin >> cmd >> a >> b;
-
-        if (cmd==0){
-            // unite
-            dsu.unite(a, b);
-
+    int mi=a[0];
+    for (auto x : a){
+        if (x==mi){
+            b.push_back(x);
         }else{
-            // query
-            cout << (dsu.find(a)==dsu.find(b)) << "\n";
-
+            c.push_back(x);
         }
     }
+
+    if (b.size()==0 || c.size()==0){
+        cout << -1 << "\n";
+    }else{
+        cout << b.size() << " " << c.size() << "\n";
+        for (auto x : b){
+            cout << x << " ";
+        }
+        cout << "\n";
+        for (auto x : c){
+            cout << x << " ";
+        }
+        cout << "\n";
+    }
+    
     return;
 }
 
@@ -108,6 +96,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve1();
     }
