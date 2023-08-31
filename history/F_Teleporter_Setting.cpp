@@ -43,84 +43,74 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 400+5;
+const int MAX_N = 5e5+5;
 const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
 int n, m, a, b;
-vector<vector<pair<int, int>>> G(MAX_N); // from -> <to, id>
-vector<pair<int, int>> v(1); // <from, to>
+vector<vector<int>> G(MAX_N);
+vector<int> x(MAX_N, -1), y(MAX_N, -1);
 
-queue<pair<int, int>> qq; // <from, len>
-bitset<MAX_N> vis;
+void bfs(int start, vector<int> &dist){
 
-int ans;
-vector<pair<int, int>> parent(MAX_N); // <parent, id>
-bitset<MAX_N*MAX_N> on_path;
+    bitset<MAX_N> vis;
+    queue<int> qq;
 
-int bfs(int id){
-
-    // init
-    while (qq.size()) qq.pop();
-    vis=0;
-    
-    vis[1]=1;
-    qq.push({1, 0});
+    qq.push(start);
+    vis[start]=1;
+    dist[start]=0;
     while (qq.size()){
-        int now=qq.front().first;
-        int len=qq.front().second;
+        int now=qq.front();
         qq.pop();
-
-        if (now==n){
-            return len;
-        }
+        cerr << "now: " << now << " dist: " << dist[now] << "\n";
 
         for (auto x : G[now]){
-            if (now==v[id].first && x.first==v[id].second){
-                continue;
-            }
-            if (vis[x.first]==0){
-                vis[x.first]=1;
-                parent[x.first].first=now;
-                parent[x.first].second=x.second;
-                qq.push({x.first, len+1});
+            if (x!=0 && vis[x]==0){
+                qq.push(x);
+                vis[x]=1;
+                dist[x]=dist[now]+1;
             }
         }
     }
-
-    return -1;
 }
 
-void solve1(){
 
+void solve1(){
+    
     // input
     cin >> n >> m;
-    for (int i=1 ; i<=m ; i++){
+    for (int i=0 ; i<m ; i++){
         cin >> a >> b;
-        G[a].push_back({b, i});
-        v.push_back({a, b});
+        G[a].push_back(b);
+        G[b].push_back(a);
     }
 
-    // process
-    ans=bfs(0);
+    bfs(1, x);
+    cerr << "\n";
+    bfs(n, y);
 
-    // get path
-    int now=n;
-    while (now!=0){
-        on_path[parent[now].second]=1;
-        now=parent[now].first;
-    }
+    // preview
+    for (int i=1 ; i<=n ; i++){
+        cerr << x[i] << " ";
+    }   cerr << "\n";
+    for (int i=1 ; i<=n ; i++){
+        cerr << y[i] << " ";
+    }   cerr << "\n";
 
-    // output
-    for (int i=1 ; i<=m ; i++){
-        if (on_path[i]==0){
-            cout << ans << "\n";
-        }else{
-            cout << bfs(i) << "\n";
+    // get answer
+    for (int i=1 ; i<=n ; i++){
+        int mi=(x[n]==-1 ? INF : x[n]);
+        for (auto p : G[0]){
+            if (x[i]!=-1 && y[p]!=-1){
+                mi=min(mi, x[i]+y[p]+1);
+            }
+            if (x[p]!=-1 && y[i]!=-1){
+                mi=min(mi, x[p]+y[i]+1);
+            }
         }
+        cout << (mi==INF ? -1 : mi) << " ";
     }
-    
     return;
 }
 

@@ -43,84 +43,62 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 400+5;
+const int MAX_N = 5e5+5;
 const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, m, a, b;
-vector<vector<pair<int, int>>> G(MAX_N); // from -> <to, id>
-vector<pair<int, int>> v(1); // <from, to>
-
-queue<pair<int, int>> qq; // <from, len>
-bitset<MAX_N> vis;
-
-int ans;
-vector<pair<int, int>> parent(MAX_N); // <parent, id>
-bitset<MAX_N*MAX_N> on_path;
-
-int bfs(int id){
-
-    // init
-    while (qq.size()) qq.pop();
-    vis=0;
-    
-    vis[1]=1;
-    qq.push({1, 0});
-    while (qq.size()){
-        int now=qq.front().first;
-        int len=qq.front().second;
-        qq.pop();
-
-        if (now==n){
-            return len;
-        }
-
-        for (auto x : G[now]){
-            if (now==v[id].first && x.first==v[id].second){
-                continue;
-            }
-            if (vis[x.first]==0){
-                vis[x.first]=1;
-                parent[x.first].first=now;
-                parent[x.first].second=x.second;
-                qq.push({x.first, len+1});
-            }
-        }
-    }
-
-    return -1;
-}
+int n, m;
+int op, a, b;
+vector<int> L(MAX_N, -1), R(MAX_N, -1);
+set<int> ss;
 
 void solve1(){
-
+    
     // input
     cin >> n >> m;
-    for (int i=1 ; i<=m ; i++){
-        cin >> a >> b;
-        G[a].push_back({b, i});
-        v.push_back({a, b});
+
+    // init
+    for (int i=1 ; i<=n ; i++){
+        ss.insert(i);
     }
 
-    // process
-    ans=bfs(0);
+    // queries
+    for (int i=0 ; i<m ; i++){
+        cin >> op;
 
-    // get path
-    int now=n;
-    while (now!=0){
-        on_path[parent[now].second]=1;
-        now=parent[now].first;
-    }
+        if (op==1){
+            cin >> a >> b;
+            R[a]=b;
+            L[b]=a;
+            ss.erase(b);
 
-    // output
-    for (int i=1 ; i<=m ; i++){
-        if (on_path[i]==0){
-            cout << ans << "\n";
-        }else{
-            cout << bfs(i) << "\n";
+        }else if (op==2){
+            cin >> a >> b;
+            R[a]=-1;
+            L[b]=-1;
+            ss.insert(b);
+
+        }else if (op==3){
+            cin >> a;
+            while (L[a]!=-1){
+                a=L[a];
+            }
+
+            vector<int> v;
+            do{
+                v.push_back(a);
+                a=R[a];
+            } while (a!=-1);
+
+            // output
+            cout << v.size() << " ";
+            for (auto x : v){
+                cout << x << " ";
+            }
+            cout << "\n";
         }
     }
-    
     return;
 }
 

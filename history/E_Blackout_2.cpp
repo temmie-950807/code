@@ -24,7 +24,7 @@ struct custom_hash {
 
 // debugger
 // ===================================
-bool debug_mode=true;
+bool debug_mode=false;
 #define cerr if(debug_mode) cerr
 #define dbg(x) cerr << #x << " = " << x << endl
 template<typename T>void debug(const T &v,int h,int w,string sv=" "){for(int i=0;i<h;i++){cerr<<v[i][0];for(int j=1;j<w;j++)cerr<<sv<<v[i][j];cerr<<endl;}};
@@ -43,15 +43,91 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 5e5+5;
+const int MAX_N = 7e5+5;
 const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, tmp;
+int n, m, e;
+int q;
+int a, b;
 vector<int> v;
+vector<pair<int, int>> edges(1);
+bitset<MAX_N> vis;
+
+int ans=0;
+vector<int> sz(MAX_N), dsu(MAX_N), city_num(MAX_N), plant_num(MAX_N);
+
+// function
+int f(int a){
+    return plant_num[a] ? city_num[a] : 0;
+}
+
+int find(int a){
+    return dsu[a]==a ? a : dsu[a]=find(dsu[a]);
+}
+
+void unite(int a, int b){
+    a=find(a);
+    b=find(b);
+
+    if (a!=b){
+        if (sz[a]>sz[b]) swap(a, b);
+
+        ans-=f(a);
+        ans-=f(b);
+
+        dsu[a]=b;
+        sz[b]+=sz[a];
+        city_num[b]+=city_num[a];
+        plant_num[b]+=plant_num[a];
+
+        ans+=f(b);
+    }
+}
 
 void solve1(){
+
+    // input
+    cin >> n >> m >> e;
+    for (int i=0 ; i<e ; i++){
+        cin >> a >> b;
+        edges.push_back({a, b});
+    }
+    cin >> q;
+    for (int i=0 ; i<q ; i++){
+        cin >> a;
+        v.push_back(a);
+        vis[a]=1;
+    }
+
+    // init
+    for (int i=1 ; i<=n+m ; i++){
+        sz[i]=1;
+        dsu[i]=i;
+        if (i<=n) city_num[i]=1;
+        else plant_num[i]=1;
+    }
+    for (int i=1 ; i<=e ; i++){
+        if (vis[i]==0){
+            unite(edges[i].first, edges[i].second);
+            cerr << edges[i].first << " " << edges[i].second << "\n";
+        }
+    }
+
+    dbg(ans);
+
+    // process
+    vector<int> op;
+    for (int i=q-1 ; i>=0 ; i--){
+        op.push_back(ans);
+        unite(edges[v[i]].first, edges[v[i]].second);
+    }
+
+    for (int i=q-1 ; i>=0 ; i--){
+        cout << op[i] << "\n";
+    }
+    cout << "\n";
     
     return;
 }
@@ -60,7 +136,6 @@ signed main(void){
     fastio;
     
     int t=1;
-    cin >> t;
     while (t--){
         solve1();
     }

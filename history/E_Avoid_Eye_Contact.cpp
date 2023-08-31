@@ -24,7 +24,7 @@ struct custom_hash {
 
 // debugger
 // ===================================
-bool debug_mode=true;
+bool debug_mode=false;
 #define cerr if(debug_mode) cerr
 #define dbg(x) cerr << #x << " = " << x << endl
 template<typename T>void debug(const T &v,int h,int w,string sv=" "){for(int i=0;i<h;i++){cerr<<v[i][0];for(int j=1;j<w;j++)cerr<<sv<<v[i][j];cerr<<endl;}};
@@ -43,84 +43,110 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 400+5;
+const int MAX_N = 5e5+5;
 const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, m, a, b;
-vector<vector<pair<int, int>>> G(MAX_N); // from -> <to, id>
-vector<pair<int, int>> v(1); // <from, to>
+int n, m;
+int sx, sy;
+int gx, gy;
+vector<string> v;
 
-queue<pair<int, int>> qq; // <from, len>
-bitset<MAX_N> vis;
+char cc[5]={'>', '<', '^', 'v', '#'};
+int mx[4]={0, 0, -1, 1};
+int my[4]={1, -1, 0, 0};
 
-int ans;
-vector<pair<int, int>> parent(MAX_N); // <parent, id>
-bitset<MAX_N*MAX_N> on_path;
+bool in(int x, int y){
+    return 0<=x && x<n && 0<=y && y<m;
+}
 
-int bfs(int id){
-
-    // init
-    while (qq.size()) qq.pop();
-    vis=0;
-    
-    vis[1]=1;
-    qq.push({1, 0});
-    while (qq.size()){
-        int now=qq.front().first;
-        int len=qq.front().second;
-        qq.pop();
-
-        if (now==n){
-            return len;
-        }
-
-        for (auto x : G[now]){
-            if (now==v[id].first && x.first==v[id].second){
-                continue;
-            }
-            if (vis[x.first]==0){
-                vis[x.first]=1;
-                parent[x.first].first=now;
-                parent[x.first].second=x.second;
-                qq.push({x.first, len+1});
-            }
+int is_blocker(int x, int y){
+    int op=-1;
+    for (int i=0 ; i<5 ; i++){
+        if (v[x][y]==cc[i]){
+            op=i;
         }
     }
+    return op;
+}
 
-    return -1;
+void fill(int x, int y){
+    int op=is_blocker(x, y);
+    if (op==-1 || op==4) return;
+
+    v[x][y]='#';
+    while (in(x+mx[op], y+my[op]) && is_blocker(x+mx[op], y+my[op])==-1){
+        x+=mx[op];
+        y+=my[op];
+        v[x][y]='@';
+    }
 }
 
 void solve1(){
 
     // input
     cin >> n >> m;
-    for (int i=1 ; i<=m ; i++){
-        cin >> a >> b;
-        G[a].push_back({b, i});
-        v.push_back({a, b});
+    v.resize(n);
+    for (int i=0 ; i<n ; i++){
+        cin >> v[i];
     }
 
-    // process
-    ans=bfs(0);
-
-    // get path
-    int now=n;
-    while (now!=0){
-        on_path[parent[now].second]=1;
-        now=parent[now].first;
-    }
-
-    // output
-    for (int i=1 ; i<=m ; i++){
-        if (on_path[i]==0){
-            cout << ans << "\n";
-        }else{
-            cout << bfs(i) << "\n";
+    // init
+    for (int i=0 ; i<n ; i++){
+        for (int j=0 ; j<m ; j++){
+            if (v[i][j]=='S'){
+                sx=i;
+                sy=j;
+            }
+            if (v[i][j]=='G'){
+                gx=i;
+                gy=j;
+            }
         }
     }
     
+    // mark all sight
+    for (int i=0 ; i<n ; i++){
+        for (int j=0 ; j<m ; j++){
+            fill(i, j);
+        }
+    }
+
+    for (int i=0 ; i<n ; i++){
+        for (int j=0 ; j<m ; j++){
+            if (v[i][j]=='@') v[i][j]='#';
+        }
+    }
+
+    // preview
+    for (auto x : v){
+        cerr << x << "\n";
+    }
+
+    // find minimum path
+    queue<tuple<int, int, int>> qq;
+    qq.push({sx, sy, 0});
+    while (qq.size()){
+        int x, y, len;
+        tie(x, y, len)=qq.front();
+        qq.pop();
+
+        if (x==gx && y==gy){
+            cout << len << "\n";
+            return;
+        }
+
+        for (int i=0 ; i<4 ; i++){
+            if (in(x+mx[i], y+my[i]) && is_blocker(x+mx[i], y+my[i])==-1){
+                v[x+mx[i]][y+my[i]]='#';
+                qq.push({x+mx[i], y+my[i], len+1});
+            }
+        }
+    }
+
+    // output
+    cout << -1 << "\n";
     return;
 }
 

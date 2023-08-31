@@ -43,82 +43,65 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 400+5;
+const int MAX_N = 5e5+5;
 const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, m, a, b;
-vector<vector<pair<int, int>>> G(MAX_N); // from -> <to, id>
-vector<pair<int, int>> v(1); // <from, to>
+int n, q, a, b;
+char c;
+set<pair<int, char>> v;
+int cnt=0, mi=INF, ma=-INF;
 
-queue<pair<int, int>> qq; // <from, len>
-bitset<MAX_N> vis;
+void init(){
+    cnt=0;
+    mi=INF;
+    ma=-INF;
+    return;
+}
 
-int ans;
-vector<pair<int, int>> parent(MAX_N); // <parent, id>
-bitset<MAX_N*MAX_N> on_path;
-
-int bfs(int id){
-
-    // init
-    while (qq.size()) qq.pop();
-    vis=0;
-    
-    vis[1]=1;
-    qq.push({1, 0});
-    while (qq.size()){
-        int now=qq.front().first;
-        int len=qq.front().second;
-        qq.pop();
-
-        if (now==n){
-            return len;
-        }
-
-        for (auto x : G[now]){
-            if (now==v[id].first && x.first==v[id].second){
-                continue;
-            }
-            if (vis[x.first]==0){
-                vis[x.first]=1;
-                parent[x.first].first=now;
-                parent[x.first].second=x.second;
-                qq.push({x.first, len+1});
+int get_answer(){
+    for (auto x : v){
+        // cerr << x.first << " " << x.second << "\n";
+        if (x.second=='+'){
+            cnt++;
+        }else if (x.second=='-'){
+            if (cnt==0){
+                mi=min(mi, x.first);
+            }else{
+                cnt--;
             }
         }
+        ma=max(ma, x.first);
     }
 
-    return -1;
+    dbg(mi);
+    dbg(ma);
+    if (mi==INF){
+        return ma;
+    }else{
+        return ma+(ma-mi);
+    }
 }
 
 void solve1(){
 
     // input
-    cin >> n >> m;
-    for (int i=1 ; i<=m ; i++){
+    cin >> n >> q;
+    for (int i=0 ; i<2*n ; i++){
+        cin >> c >> a;
+        v.insert({a, c});
+    }
+
+    init();
+    cout << get_answer() << "\n";
+    
+    // queries
+    for (int i=0 ; i<q ; i++){
         cin >> a >> b;
-        G[a].push_back({b, i});
-        v.push_back({a, b});
-    }
-
-    // process
-    ans=bfs(0);
-
-    // get path
-    int now=n;
-    while (now!=0){
-        on_path[parent[now].second]=1;
-        now=parent[now].first;
-    }
-
-    // output
-    for (int i=1 ; i<=m ; i++){
-        if (on_path[i]==0){
-            cout << ans << "\n";
-        }else{
-            cout << bfs(i) << "\n";
-        }
+        
+        init();
+        cout << get_answer() << "\n";
     }
     
     return;

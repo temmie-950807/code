@@ -43,84 +43,58 @@ template<typename T,size_t size>void debug(const array<T, size> &a){for(auto z:a
 // ===================================
 
 // declare
-const int MAX_N = 400+5;
+const int MAX_N = 5e5+5;
 const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, m, a, b;
-vector<vector<pair<int, int>>> G(MAX_N); // from -> <to, id>
-vector<pair<int, int>> v(1); // <from, to>
+int n, tmp;
+vector<int> v;
 
-queue<pair<int, int>> qq; // <from, len>
+int ptr;
 bitset<MAX_N> vis;
 
-int ans;
-vector<pair<int, int>> parent(MAX_N); // <parent, id>
-bitset<MAX_N*MAX_N> on_path;
-
-int bfs(int id){
-
-    // init
-    while (qq.size()) qq.pop();
-    vis=0;
-    
-    vis[1]=1;
-    qq.push({1, 0});
-    while (qq.size()){
-        int now=qq.front().first;
-        int len=qq.front().second;
-        qq.pop();
-
-        if (now==n){
-            return len;
-        }
-
-        for (auto x : G[now]){
-            if (now==v[id].first && x.first==v[id].second){
-                continue;
-            }
-            if (vis[x.first]==0){
-                vis[x.first]=1;
-                parent[x.first].first=now;
-                parent[x.first].second=x.second;
-                qq.push({x.first, len+1});
-            }
-        }
+int score(){
+    set<int> ss;
+    for (int i=0 ; i<n ; i++){
+        ss.insert(__gcd(v[i], v[(i+1)%n]));
     }
-
-    return -1;
+    return ss.size();
 }
 
 void solve1(){
+    
+    // init
+    v.clear();
+    vis=0;
+    ptr=1;
 
     // input
-    cin >> n >> m;
-    for (int i=1 ; i<=m ; i++){
-        cin >> a >> b;
-        G[a].push_back({b, i});
-        v.push_back({a, b});
-    }
+    cin >> n;
 
     // process
-    ans=bfs(0);
-
-    // get path
-    int now=n;
-    while (now!=0){
-        on_path[parent[now].second]=1;
-        now=parent[now].first;
+    v.push_back(1);
+    vis[1]=1;
+    while (v.size()<n){
+        if (v.back()*2<=n && vis[v.back()*2]==0){
+            vis[v.back()*2]=1;
+            v.push_back(v.back()*2);
+        }else{
+            while (vis[ptr]==1){
+                ptr++;
+            }
+            v.push_back(ptr);
+            vis[ptr]=1;
+        }
     }
 
     // output
-    for (int i=1 ; i<=m ; i++){
-        if (on_path[i]==0){
-            cout << ans << "\n";
-        }else{
-            cout << bfs(i) << "\n";
-        }
+    for (int i=0 ; i<n ; i++){
+        cout << v[i] << " ";
     }
-    
+    cout << "\n";
+    // dbg(score());
+
     return;
 }
 
@@ -128,6 +102,7 @@ signed main(void){
     fastio;
     
     int t=1;
+    cin >> t;
     while (t--){
         solve1();
     }
