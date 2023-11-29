@@ -26,7 +26,9 @@ struct custom_hash {
 // ===================================
 bool debug_mode=true;
 #define cerr if(debug_mode) cerr
-#define dbg(x) cerr << #x << " = " << x << endl
+template<typename T> void _do(T x){cerr<<x<<"\n";}
+template<typename T, typename ...U> void _do(T x, U ...y){cerr << x << ", "; _do(y...);}
+#define dbg(...) cerr << #__VA_ARGS__ << " = "; _do(__VA_ARGS__);
 template<typename T>void debug(const T &v,int h,int w,string sv=" "){for(int i=0;i<h;i++){cerr<<v[i][0];for(int j=1;j<w;j++)cerr<<sv<<v[i][j];cerr<<endl;}};
 template<typename T>void debug(const T &v,int n,string sv=" "){if(n!=0)cerr<<v[0];for(int i=1;i<n;i++)cerr<<sv<<v[i];cerr<<endl;};
 template<typename T>void debug(const vector<T>&v){debug(v,v.size());}
@@ -49,61 +51,41 @@ const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
 int n, k, tmp;
-int x, y, z;
-vector<int> a, b;
+vector<int> v;
 
-int f(int a, int b){
-    return (a+b)*(a-b+1)/2;
+bool check(int mid){
+    
+    if (mid>0){
+        
+    }
 }
 
 void solve1(){
-    
+
     // input
     cin >> n >> k;
     for (int i=0 ; i<n ; i++){
         cin >> tmp;
+        v.push_back(tmp);
+    }
+    sort(v.begin(), v.end());
 
-        if (tmp==0){
-            y++;
-        }else if (tmp<0){
-            a.push_back(tmp);
-        }else if (tmp>0){
-            b.push_back(tmp);
+    // process
+    int ll=-1e9, rr=1e9+1, ans=rr;
+    while (ll<rr){
+        int mid=ll+(rr-ll)/2;
+
+        if (check(mid)){
+            rr=mid;
+            ans=rr;
+        }else{
+            ll=mid+1;
         }
     }
 
-    // process
-    x=a.size()*b.size();
-    y=f(n-1, n-y);
-    z=a.size()*a.size()+b.size()*b.size();
-
-    sort(a.begin(), a.end());
-    sort(b.begin(), b.end());
-
-    dbg(x);
-    dbg(y);
-    dbg(z);
-    debug(a);
-    debug(b);
-
-    if (k<=x){
-        // answer is negative
-        cout << "negative\n";
-        return;
-
-    }else if (k<=x+y){
-        // answer is zero
-        cout << 0 << "\n";
-        return;
-
-    }else{
-        // answer is positive
-        cout << "positive\n";
-        return;
-
-    }
-
-
+    // output
+    cout << ans << "\n";
+    
     return;
 }
 

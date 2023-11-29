@@ -26,7 +26,9 @@ struct custom_hash {
 // ===================================
 bool debug_mode=true;
 #define cerr if(debug_mode) cerr
-#define dbg(x) cerr << #x << " = " << x << endl
+template<typename T> void _do(T x){cerr<<x<<"\n";}
+template<typename T, typename ...U> void _do(T x, U ...y){cerr << x << ", "; _do(y...);}
+#define dbg(...) cerr << #__VA_ARGS__ << " = "; _do(__VA_ARGS__);
 template<typename T>void debug(const T &v,int h,int w,string sv=" "){for(int i=0;i<h;i++){cerr<<v[i][0];for(int j=1;j<w;j++)cerr<<sv<<v[i][j];cerr<<endl;}};
 template<typename T>void debug(const T &v,int n,string sv=" "){if(n!=0)cerr<<v[0];for(int i=1;i<n;i++)cerr<<sv<<v[i];cerr<<endl;};
 template<typename T>void debug(const vector<T>&v){debug(v,v.size());}
@@ -48,20 +50,44 @@ const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, k, a, b, c;
+int n, d;
+int a, b, c;
 vector<tuple<int, int, int>> v;
+const int mul[2]={1, -1};
 
 void solve1(){
 
     // input
-    cin >> n >> k;
+    cin >> n >> d;
     for (int i=0 ; i<n ; i++){
         cin >> a >> b >> c;
         v.push_back({a, b, c});
     }
-    
-    // process
-    
+
+    int ma=0;
+    for (int i=0 ; i<2 ; i++){
+        for (int j=0 ; j<2 ; j++){
+            for (int k=0 ; k<2 ; k++){
+                
+                int ans=0;
+                priority_queue<int, vector<int>, greater<int>> pq;
+                for (auto [a, b, c] : v){
+                    pq.push(a*mul[i]+b*mul[j]+c*mul[k]);
+                    ans+=a*mul[i]+b*mul[j]+c*mul[k];
+                    if (pq.size()>d){
+                        ans-=pq.top();
+                        pq.pop();
+                    }
+                }
+                ma=max(ma, ans);
+
+            }
+        }
+    }
+
+    // output
+    cout << ma << "\n";
+
     return;
 }
 

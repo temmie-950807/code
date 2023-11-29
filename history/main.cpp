@@ -48,83 +48,24 @@ const int INF = 2e18;
 const int MOD = 1e9+7;
 const double EPS = 1e-6;
 
-int n, q, tmp, ta, ti;
+int n, tmp;
 vector<int> v;
-multiset<int> ss;
-
-struct Disjoint_Set{
-    vector<int> arr, sz;
-
-    void init(int n){ // 使用前，要傳入陣列大小初始化
-        arr.resize(n+10);
-        sz.resize(n+10);
-        for (int i=0 ; i<n ; i++){
-            arr[i]=i;
-            sz[i]=1;
-        }
-    }
-
-    int find(int a){ // 回傳 a 節點的 leader
-        if (arr[a]==a) return a;
-        else return arr[a]=find(arr[a]); // 路徑壓縮優化
-    }
-
-    void unite(int a, int b){ // 將兩個節點合併
-        a=find(a);
-        b=find(b);
-
-        if (a!=b){
-            ss.erase(ss.find(sz[a]));
-            ss.erase(ss.find(sz[b]));
-            if (sz[a]<sz[b]) swap(a, b); // 啟發式合併優化
-            arr[b]=a;
-            sz[a]+=sz[b];
-            ss.insert(sz[a]);
-        }
-    }
-} dsu;
-
-void Union(int pos){
-    if (v[pos]==1 && pos>0 && v[pos-1]==1){
-        dsu.unite(pos, pos-1);
-    }
-    if (v[pos]==1 && pos+1<n && v[pos+1]){
-        dsu.unite(pos, pos+1);
-    }
-}
 
 void solve1(){
     
-    // input
-    cin >> n >> q;
-    for (int i=0 ; i<n ; i++){
-        cin >> tmp;
-        if (tmp) ss.insert(1);
+    while (cin >> tmp){
         v.push_back(tmp);
     }
-    dsu.init(n);
 
-    // build
-    for (int i=0 ; i<n ; i++){
-        Union(i);
+    sort(v.begin(), v.end());
+    v.resize(unique(v.begin(), v.end())-v.begin());
+    for (int i=0 ; i<v.size() ; i++){
+        if (v[i]!=i){
+            cout << "miss: " << i << "\n";
+            return;
+        }
     }
-    ta+=*prev(ss.end());
-    ti+=*ss.begin(); 
-
-    // queries
-    for (int i=0 ; i<q ; i++){
-        cin >> tmp;
-        tmp--;
-
-        v[tmp]=1;
-        ss.insert(1);
-        Union(tmp);
-        ta+=*prev(ss.end());
-        ti+=*ss.begin();
-    }
-
-    // output
-    cout << ta << "\n" << ti << "\n";
+    
     return;
 }
 

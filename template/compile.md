@@ -1,0 +1,1 @@
+g++ -Wl,-stack_size,0x10000000 main.cpp -o main

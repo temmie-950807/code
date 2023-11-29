@@ -26,7 +26,9 @@ struct custom_hash {
 // ===================================
 bool debug_mode=true;
 #define cerr if(debug_mode) cerr
-#define dbg(x) cerr << #x << " = " << x << endl
+template<typename T> void _do(T x){cerr<<x<<"\n";}
+template<typename T, typename ...U> void _do(T x, U ...y){cerr << x << ", "; _do(y...);}
+#define dbg(...) cerr << #__VA_ARGS__ << " = "; _do(__VA_ARGS__);
 template<typename T>void debug(const T &v,int h,int w,string sv=" "){for(int i=0;i<h;i++){cerr<<v[i][0];for(int j=1;j<w;j++)cerr<<sv<<v[i][j];cerr<<endl;}};
 template<typename T>void debug(const T &v,int n,string sv=" "){if(n!=0)cerr<<v[0];for(int i=1;i<n;i++)cerr<<sv<<v[i];cerr<<endl;};
 template<typename T>void debug(const vector<T>&v){debug(v,v.size());}
@@ -50,12 +52,10 @@ const double EPS = 1e-6;
 
 int n, tmp;
 vector<int> v;
-int dp[105][15];
 
-// function
 int qp(int b, int p, int m){
     int ret=1;
-    for ( ; p>0 ; p>>=1){
+    for ( ; p ; p>>=1){
         if (p&1) ret=ret*b%m;
         b=b*b%m;
     }
@@ -63,7 +63,7 @@ int qp(int b, int p, int m){
 }
 
 void solve1(){
-    
+
     // input
     cin >> n;
     for (int i=0 ; i<n ; i++){
@@ -72,34 +72,26 @@ void solve1(){
     }
 
     // process
+    vector<vector<int>> dp(105, vector<int>(15, 0));
+    // dp[i][j] = 對於前 i 個骰子，得到 j 點的機率是多少
+
     dp[0][0]=1;
-    for (int i=0 ; i<n ; i++){
-        for (int j=0 ; j<=11 ; j++){
-            for (int k=0 ; k<=v[i] ; k++){
-                dp[i+1][min(11LL, j+k)]+=dp[i][j];
-                if (dp[i+1][min(11LL, j+k)]>=MOD){
-                    dp[i+1][min(11LL, j+k)]-=MOD;
-                }
+    for (int i=0 ; i<n ; i++){ // 枚舉每個骰子
+        for (int j=0 ; j<=11 ; j++){ // 枚舉原先的點數
+            for (int k=0 ; k<=v[i] ; k++){ // 加上的點數
+                cerr << i << "," << j << " -> " << i+1 << "," << min(11LL, j+k) << "\n";
+                dp[i+1][min(11LL, j+k)]+=dp[i][j]*qp(k, MOD-2, MOD);
+                dp[i+1][min(11LL, j+k)]%=MOD;
             }
         }
     }
 
+    // preview
+    debug(dp, n+1, 11);
+
     // output
-    for (int i=0 ; i<=n ; i++){
-        for (int j=0 ; j<=11 ; j++){
-            cout << dp[i][j] << " ";
-        }
-        cout << "\n";
-    }
-
-    // get total
-    int total=0;
-    for (int i=0 ; i<=11 ; i++){
-        total+=dp[n][i];
-    }
-    dbg(dp[n][10]);
-    dbg(total);
-
+    cout << dp[n][10] << "\n";
+    
     return;
 }
 

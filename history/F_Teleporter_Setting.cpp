@@ -26,7 +26,9 @@ struct custom_hash {
 // ===================================
 bool debug_mode=true;
 #define cerr if(debug_mode) cerr
-#define dbg(x) cerr << #x << " = " << x << endl
+template<typename T> void _do(T x){cerr<<x<<"\n";}
+template<typename T, typename ...U> void _do(T x, U ...y){cerr << x << ", "; _do(y...);}
+#define dbg(...) cerr << #__VA_ARGS__ << " = "; _do(__VA_ARGS__);
 template<typename T>void debug(const T &v,int h,int w,string sv=" "){for(int i=0;i<h;i++){cerr<<v[i][0];for(int j=1;j<w;j++)cerr<<sv<<v[i][j];cerr<<endl;}};
 template<typename T>void debug(const T &v,int n,string sv=" "){if(n!=0)cerr<<v[0];for(int i=1;i<n;i++)cerr<<sv<<v[i];cerr<<endl;};
 template<typename T>void debug(const vector<T>&v){debug(v,v.size());}
@@ -50,31 +52,28 @@ const double EPS = 1e-6;
 
 int n, m, a, b;
 vector<vector<int>> G(MAX_N);
-vector<int> x(MAX_N, -1), y(MAX_N, -1);
+vector<int> dis_A(MAX_N, INF), dis_B(MAX_N, INF);
 
-void bfs(int start, vector<int> &dist){
+void bfs(vector<int> &dis, int start){
 
-    bitset<MAX_N> vis;
+    // init
     queue<int> qq;
 
+    // process
+    dis[start]=0;
     qq.push(start);
-    vis[start]=1;
-    dist[start]=0;
     while (qq.size()){
         int now=qq.front();
         qq.pop();
-        cerr << "now: " << now << " dist: " << dist[now] << "\n";
 
         for (auto x : G[now]){
-            if (x!=0 && vis[x]==0){
+            if (dis[x]==INF){
+                dis[x]=dis[now]+1;
                 qq.push(x);
-                vis[x]=1;
-                dist[x]=dist[now]+1;
             }
         }
     }
 }
-
 
 void solve1(){
     
@@ -86,31 +85,21 @@ void solve1(){
         G[b].push_back(a);
     }
 
-    bfs(1, x);
-    cerr << "\n";
-    bfs(n, y);
+    // process
+    bfs(dis_A, 1);
+    bfs(dis_B, n);
+    // debug(dis_A, n+1);
+    // debug(dis_B, n+1);
 
-    // preview
+    // queries
     for (int i=1 ; i<=n ; i++){
-        cerr << x[i] << " ";
-    }   cerr << "\n";
-    for (int i=1 ; i<=n ; i++){
-        cerr << y[i] << " ";
-    }   cerr << "\n";
-
-    // get answer
-    for (int i=1 ; i<=n ; i++){
-        int mi=(x[n]==-1 ? INF : x[n]);
-        for (auto p : G[0]){
-            if (x[i]!=-1 && y[p]!=-1){
-                mi=min(mi, x[i]+y[p]+1);
-            }
-            if (x[p]!=-1 && y[i]!=-1){
-                mi=min(mi, x[p]+y[i]+1);
-            }
+        if (min(dis_A[0]+dis_B[i], dis_A[n])>=INF){
+            cout << -1 << " ";
+        }else{
+            cout << min(dis_A[0]+dis_B[i], dis_A[n]) << " ";
         }
-        cout << (mi==INF ? -1 : mi) << " ";
     }
+
     return;
 }
 
